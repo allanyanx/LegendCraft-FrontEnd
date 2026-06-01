@@ -1,0 +1,58 @@
+<div class="container px-6 py-8 mx-auto text-[#F5F5F5]">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold">
+      Resultados para <span class="text-[#E53935]">{{ terminoBusqueda() }}</span>
+    </h1>
+    <p class="text-sm text-[#9E9E9E] mt-1">{{ articulos().length }} resultados</p>
+  </div>
+
+  <div class="flex flex-col md:flex-row gap-10">
+    <aside class="w-full md:w-64 shrink-0 pr-6 border-r border-[#2B2B2B] hidden md:block">
+      <div class="mb-8">
+        <h3 class="text-lg font-bold mb-4 border-b border-[#2B2B2B] pb-2">Precio</h3>
+        <div class="h-2 bg-[#2B2B2B] rounded-full mt-4"></div>
+      </div>
+
+      <div class="mb-8">
+        <h3 class="text-lg font-bold mb-4 border-b border-[#2B2B2B] pb-2">Franquicia</h3>
+        <div class="flex flex-col gap-2">
+          @for (f of filtros.franquicias; track $index) {
+            <label class="flex items-center gap-2 text-sm hover:text-white cursor-pointer">
+              <input type="checkbox" class="accent-[#E53935]" /> {{ f }}
+            </label>
+          }
+        </div>
+      </div>
+    </aside>
+
+    <main class="flex-1">
+      <div class="flex items-center justify-between mb-6">
+        <span class="text-sm text-[#9E9E9E]">Mostrando resultados</span>
+        <select
+          class="bg-[#1A1A1A] border border-[#2B2B2B] text-sm text-[#F5F5F5] py-2 px-4 rounded-md focus:outline-none focus:border-[#E53935]"
+        >
+          <option>Precio: Menor a Mayor</option>
+          <option>Precio: Mayor a Menor</option>
+          <option>Más Nuevos</option>
+          <option>Nombre: A - Z</option>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        @if (isLoading()) {
+          <app-product-skeleton></app-product-skeleton>
+          <app-product-skeleton></app-product-skeleton>
+          <app-product-skeleton></app-product-skeleton>
+        } @else {
+          @for (item of articulos(); track item.id) {
+            <app-product-card [articulo]="item"></app-product-card>
+          } @empty {
+            <div class="col-span-full mt-12">
+              <app-empty-state></app-empty-state>
+            </div>
+          }
+        }
+      </div>
+    </main>
+  </div>
+</div>
