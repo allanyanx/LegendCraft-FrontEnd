@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/dashboard-admin.css" />
+  </head>
+  <body>
+    <header class="header">
+      <p>Buenos días, Admin :)</p>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <button (click)="mostrarCrear()">+ Subir Artículo</button>
+        <button (click)="mostrarEditar()">X Editar/Eliminar</button>
+      </aside>
+
+      <main class="contenido">
+        @if (seccionActiva === 'crear') {
+          <section>
+            <h2>Crear artículo</h2>
+            form1
+          </section>
+        }
+
+        @if (seccionActiva === 'editar') {
+          <section>
+            <h2>editar/eliminar artículo</h2>
+          </section>
+        }
+      </main>
+    </div>
+  </body>
+</html>

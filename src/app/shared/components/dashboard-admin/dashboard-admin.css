@@ -1,0 +1,49 @@
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+header {
+  font-size: 26pt;
+  font-style: italic;
+  font-family: 'Times New Roman', Times, serif;
+  color: azure;
+}
+button {
+  background-color: #e53935;
+}
+body {
+  font-family: sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column; /* header arriba, layout abajo */
+}
+
+/* HEADER */
+.header {
+  padding: 16px 24px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* LAYOUT: sidebar + contenido lado a lado */
+.layout {
+  display: flex;
+  flex: 1; /* ocupa todo el espacio restante debajo del header */
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 180px;
+  padding: 24px 16px;
+  border-right: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* CONTENIDO PRINCIPAL */
+.contenido {
+  flex: 1; /* ocupa todo el ancho restante */
+  padding: 24px;
+}

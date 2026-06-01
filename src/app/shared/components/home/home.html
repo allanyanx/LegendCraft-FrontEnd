@@ -1,0 +1,113 @@
+<!-- 1. CARRUSEL / BANNER PRINCIPAL -->
+<section class="max-w-7xl mx-auto px-4 py-6">
+  <div
+    class="bg-[#1A1A1A] text-white rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8 min-h-[350px] relative border border-neutral-800"
+  >
+    <!-- Contenedor de la Imagen Mockup -->
+    <div
+      class="w-full md:w-1/3 bg-neutral-800 rounded-xl aspect-[3/4] max-w-[280px] flex items-center justify-center border border-neutral-700"
+    >
+      <span class="text-neutral-400 text-sm">Imagen del Producto</span>
+    </div>
+
+    <!-- Texto descriptivo -->
+    <div class="flex-1 text-center md:text-left flex flex-col justify-between h-full py-4">
+      <div>
+        <h2 class="text-3xl font-bold mb-2 tracking-wide text-[#E53935]">LegendCraft</h2>
+        <p class="text-neutral-300 max-w-md">
+          Características destacadas y descripción del producto principal del carrusel.
+        </p>
+      </div>
+
+      <!-- Indicadores de posición (Puntitos) -->
+      <div class="flex justify-center md:justify-start gap-2 mt-6">
+        <span class="w-2 h-2 rounded-full bg-[#E53935] cursor-pointer"></span>
+        <span class="w-2 h-2 rounded-full bg-neutral-600 cursor-pointer"></span>
+        <span class="w-2 h-2 rounded-full bg-neutral-600 cursor-pointer"></span>
+        <span class="w-2 h-2 rounded-full bg-neutral-600 cursor-pointer"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. SECCIÓN DE PRODUCTOS -->
+<section class="max-w-7xl mx-auto px-4 py-8">
+  <h3 class="text-2xl font-bold text-white text-center mb-6 tracking-wide">Productos</h3>
+
+  <!-- Pestañas de Filtros (Tabs) -->
+  <div class="flex flex-wrap justify-center gap-3 mb-8">
+    <button
+      class="px-5 py-2 bg-[#E53935] text-white font-semibold rounded-full text-sm transition hover:bg-[#8E0000]"
+    >
+      Animados
+    </button>
+    <button
+      class="px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-[#C09F6F] hover:text-[#C09F6F]"
+    >
+      Ofertas
+    </button>
+    <button
+      class="px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-[#C09F6F] hover:text-[#C09F6F]"
+    >
+      Nuevos
+    </button>
+    <button
+      class="px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-[#C09F6F] hover:text-[#C09F6F]"
+    >
+      Preventa
+    </button>
+  </div>
+
+  <!-- Cuadrícula de Tarjetas (Grid) -->
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <!-- Tarjeta 1 (Con la imagen de tu boceto como ejemplo) -->
+    <div
+      class="bg-[#1A1A1A] border border-neutral-800 rounded-2xl p-4 flex flex-col aspect-square justify-center items-center group hover:border-[#E53935]/50 transition cursor-pointer"
+    >
+      <div
+        class="w-full h-full bg-neutral-800 rounded-xl overflow-hidden flex items-center justify-center"
+      >
+        <span class="text-[#E53935] text-4xl group-hover:scale-110 transition duration-300"
+          >🤖</span
+        >
+      </div>
+    </div>
+
+    <!-- Tarjetas de relleno vacías (Simulando tu mockup) -->
+    <div
+      *ngFor="let i; of"
+      class="bg-[#1A1A1A] border border-neutral-800 rounded-2xl p-4 aspect-square flex items-center justify-center"
+    >
+      <div
+        class="w-full h-full bg-neutral-800 rounded-xl border border-dashed border-neutral-700"
+      ></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. PREGUNTAS FRECUENTES (FAQ) -->
+<section class="max-w-4xl mx-auto px-4 py-12">
+  <h3 class="text-2xl font-bold text-white text-center mb-8 tracking-wide">Preguntas Frecuentes</h3>
+
+  <div class="space-y-4">
+    <!-- Pregunta 1 -->
+    <div class="border-b border-neutral-800 pb-4">
+      <button
+        class="w-full flex items-center gap-3 text-left text-neutral-200 hover:text-[#E53935] transition font-medium py-2"
+      >
+        <span class="text-[#C09F6F] text-xl font-bold">+</span>
+        ¿Que harias con mi verga?
+      </button>
+    </div>
+
+    <!-- Pregunta 2 -->
+    <div class="border-b border-neutral-800 pb-4">
+      <button
+        class="w-full flex items-center gap-3 text-left text-neutral-200 hover:text-[#E53935] transition font-medium py-2"
+      >
+        <span class="text-[#C09F6F] text-xl font-bold">+</span>
+        ¿Como se realiza el pedido?
+      </button>
+    </div>
+  </div>
+</section>
