@@ -1,1 +1,24 @@
-{}
+{
+  "articulos": [
+    {
+      "id": 1,
+      "idCategoria": 2,
+      "nombre": "Figura Tartaglia - Escala 1/8",
+      "precio": 120.5,
+      "stock": 5,
+      "atributos": { "franquicia": "Genshin Impact", "material": "Resina", "escala": "1/8" },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=Tartaglia",
+      "estadoActivo": true
+    },
+    {
+      "id": 2,
+      "idCategoria": 1,
+      "nombre": "Casco Space Marine - Tamaño Real",
+      "precio": 85.0,
+      "stock": 2,
+      "atributos": { "franquicia": "Warhammer 40k", "material": "PLA" },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=Space+Marine",
+      "estadoActivo": true
+    }
+  ]
+}
