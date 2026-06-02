@@ -7,4 +7,5 @@ export interface Articulo {
   atributos: Record<string, any> | null;
   urlImagen: string;
   estadoActivo: boolean;
+  fechaCreacion: string;
 }

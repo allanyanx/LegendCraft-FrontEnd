@@ -1,4 +1,11 @@
 {
+  "categorias": [
+    { "id": 1, "nombre": "Cosplay & Props", "descripcion": "Accesorios a tamaño real y armas" },
+    { "id": 2, "nombre": "Figuras & Dioramas", "descripcion": "Personajes a escala y escenarios" },
+    { "id": 3, "nombre": "Máscaras", "descripcion": "Máscaras vestibles y decorativas" },
+    { "id": 4, "nombre": "Llaveros & Miniaturas", "descripcion": "Accesorios de bolsillo" },
+    { "id": 5, "nombre": "Accesorios Gamer", "descripcion": "Soportes para mandos y audífonos" }
+  ],
   "articulos": [
     {
       "id": 1,
@@ -6,9 +13,14 @@
       "nombre": "Figura Tartaglia - Escala 1/8",
       "precio": 120.5,
       "stock": 5,
-      "atributos": { "franquicia": "Genshin Impact", "material": "Resina", "escala": "1/8" },
+      "atributos": {
+        "franquicia": "Genshin Impact",
+        "material": "Resina SLA",
+        "tamano": "Escala 1/8"
+      },
       "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=Tartaglia",
-      "estadoActivo": true
+      "estadoActivo": true,
+      "fechaCreacion": "2026-05-15T10:00:00Z"
     },
     {
       "id": 2,
@@ -18,7 +30,212 @@
       "stock": 2,
       "atributos": { "franquicia": "Warhammer 40k", "material": "PLA" },
       "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=Space+Marine",
-      "estadoActivo": true
+      "estadoActivo": true,
+      "fechaCreacion": "2025-11-20T14:30:00Z"
+    },
+    {
+      "id": 3,
+      "idCategoria": 2,
+      "nombre": "El Caballero (The Knight) - Diorama",
+      "precio": 45.0,
+      "stock": 10,
+      "atributos": {
+        "franquicia": "Hollow Knight",
+        "material": "Resina SLA",
+        "tamano": "10cm x 10cm"
+      },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=The+Knight",
+      "estadoActivo": true,
+      "fechaCreacion": "2026-06-01T08:15:00Z"
+    },
+    {
+      "id": 4,
+      "idCategoria": 1,
+      "nombre": "Espada Maestra (Master Sword)",
+      "precio": 150.0,
+      "stock": 3,
+      "atributos": { "franquicia": "The Legend of Zelda", "material": "PETG" },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=Master+Sword",
+      "estadoActivo": true,
+      "fechaCreacion": "2026-01-10T09:00:00Z"
+    },
+    {
+      "id": 5,
+      "idCategoria": 2,
+      "nombre": "Goku Super Saiyan - Busto",
+      "precio": 65.0,
+      "stock": 7,
+      "atributos": {
+        "franquicia": "Dragon Ball",
+        "material": "Resina SLA",
+        "tamano": "Escala 1/7"
+      },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=Goku",
+      "estadoActivo": true,
+      "fechaCreacion": "2025-08-05T16:45:00Z"
+    },
+    {
+      "id": 6,
+      "idCategoria": 3,
+      "nombre": "Máscara de Majora",
+      "precio": 90.0,
+      "stock": 4,
+      "atributos": {
+        "franquicia": "The Legend of Zelda",
+        "material": "ABS",
+        "tamano": "Tamaño Real"
+      },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=Majora+Mask",
+      "estadoActivo": true,
+      "fechaCreacion": "2026-05-28T11:20:00Z"
+    },
+    {
+      "id": 7,
+      "idCategoria": 1,
+      "nombre": "Espada Sierra (Chainsword)",
+      "precio": 190.0,
+      "stock": 1,
+      "atributos": { "franquicia": "Warhammer 40k", "material": "PLA" },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=Chainsword",
+      "estadoActivo": true,
+      "fechaCreacion": "2026-04-12T18:00:00Z"
+    },
+    {
+      "id": 8,
+      "idCategoria": 4,
+      "nombre": "Visión Anemo - Llavero",
+      "precio": 12.0,
+      "stock": 25,
+      "atributos": {
+        "franquicia": "Genshin Impact",
+        "material": "Resina Transparente",
+        "tamano": "5cm"
+      },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=Vision+Anemo",
+      "estadoActivo": true,
+      "fechaCreacion": "2026-02-22T10:30:00Z"
+    },
+    {
+      "id": 9,
+      "idCategoria": 3,
+      "nombre": "Máscara de Samurai Cyberpunk",
+      "precio": 110.0,
+      "stock": 0,
+      "atributos": { "franquicia": "Cyberpunk 2077", "material": "PETG", "tamano": "Tamaño Real" },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=Cyber+Mask",
+      "estadoActivo": true,
+      "fechaCreacion": "2025-12-01T14:00:00Z"
+    },
+    {
+      "id": 10,
+      "idCategoria": 2,
+      "nombre": "Majin Vegeta - Diorama",
+      "precio": 130.0,
+      "stock": 2,
+      "atributos": {
+        "franquicia": "Dragon Ball",
+        "material": "Resina SLA",
+        "tamano": "Escala 1/8"
+      },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=Majin+Vegeta",
+      "estadoActivo": true,
+      "fechaCreacion": "2026-03-15T09:45:00Z"
+    },
+    {
+      "id": 11,
+      "idCategoria": 5,
+      "nombre": "Soporte para Mando - Hollow Knight",
+      "precio": 35.0,
+      "stock": 12,
+      "atributos": { "franquicia": "Hollow Knight", "material": "PLA", "tamano": "15cm" },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=Soporte+Mando",
+      "estadoActivo": true,
+      "fechaCreacion": "2026-05-02T12:00:00Z"
+    },
+    {
+      "id": 12,
+      "idCategoria": 2,
+      "nombre": "EVA-01 Test Type - Figura",
+      "precio": 210.0,
+      "stock": 1,
+      "atributos": {
+        "franquicia": "Neon Genesis Evangelion",
+        "material": "Resina SLA",
+        "tamano": "Escala 1/6"
+      },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=EVA-01",
+      "estadoActivo": true,
+      "fechaCreacion": "2026-06-02T09:00:00Z"
+    },
+    {
+      "id": 13,
+      "idCategoria": 4,
+      "nombre": "Llavero Espada de Energía",
+      "precio": 15.0,
+      "stock": 30,
+      "atributos": { "franquicia": "Halo", "material": "ABS", "tamano": "7cm" },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=Energy+Sword",
+      "estadoActivo": true,
+      "fechaCreacion": "2026-01-20T16:20:00Z"
+    },
+    {
+      "id": 14,
+      "idCategoria": 1,
+      "nombre": "Cuchillo de Combate V",
+      "precio": 40.0,
+      "stock": 8,
+      "atributos": { "franquicia": "Cyberpunk 2077", "material": "PLA", "tamano": "Tamaño Real" },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=V+Knife",
+      "estadoActivo": true,
+      "fechaCreacion": "2026-03-30T10:15:00Z"
+    },
+    {
+      "id": 15,
+      "idCategoria": 5,
+      "nombre": "Soporte Audífonos - Purgador",
+      "precio": 55.0,
+      "stock": 5,
+      "atributos": { "franquicia": "Warhammer 40k", "material": "PETG", "tamano": "25cm" },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=Soporte+Audio",
+      "estadoActivo": true,
+      "fechaCreacion": "2026-04-05T14:40:00Z"
+    },
+    {
+      "id": 16,
+      "idCategoria": 2,
+      "nombre": "Cazador (Hunter) - Diorama",
+      "precio": 175.0,
+      "stock": 3,
+      "atributos": { "franquicia": "Bloodborne", "material": "Resina SLA", "tamano": "Escala 1/7" },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=Hunter",
+      "estadoActivo": true,
+      "fechaCreacion": "2025-10-12T11:30:00Z"
+    },
+    {
+      "id": 17,
+      "idCategoria": 3,
+      "nombre": "Máscara ANBU",
+      "precio": 65.0,
+      "stock": 6,
+      "atributos": { "franquicia": "Naruto", "material": "PLA", "tamano": "Tamaño Real" },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=ANBU+Mask",
+      "estadoActivo": true,
+      "fechaCreacion": "2026-05-18T15:00:00Z"
+    },
+    {
+      "id": 18,
+      "idCategoria": 4,
+      "nombre": "Llavero Kurisu Makise",
+      "precio": 10.0,
+      "stock": 40,
+      "atributos": {
+        "franquicia": "Steins;Gate",
+        "material": "Resina Transparente",
+        "tamano": "5cm"
+      },
+      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=Kurisu+Key",
+      "estadoActivo": true,
+      "fechaCreacion": "2026-02-10T09:20:00Z"
     }
   ]
 }
