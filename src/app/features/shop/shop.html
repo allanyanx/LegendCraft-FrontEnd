@@ -1,9 +1,15 @@
 <div class="container px-6 py-8 mx-auto text-[#F5F5F5]">
   <div class="mb-8">
-    <h1 class="text-3xl font-bold">
-      Resultados para <span class="text-[#E53935]">{{ terminoBusqueda() }}</span>
-    </h1>
-    <p class="mt-1 text-sm text-[#9E9E9E]">{{ articulos().length }} resultados</p>
+    @if (terminoBusqueda() !== '') {
+      <h1 class="text-3xl font-bold">
+        Resultados para <span class="text-[#E53935]">{{ terminoBusqueda() }}</span>
+      </h1>
+    } @else {
+      <h1 class="text-3xl font-bold">Catálogo de Productos</h1>
+    }
+    <p class="mt-1 text-sm text-[#9E9E9E]">
+      {{ articulosFiltrados().length }} productos disponibles
+    </p>
   </div>
 
   <div class="flex items-center justify-between mb-4 md:hidden">
@@ -36,7 +42,7 @@
 
     <main class="flex-1">
       <div class="flex items-center justify-between mb-6">
-        <span class="text-sm text-[#9E9E9E]">Mostrando resultados</span>
+        <span class="text-sm text-[#9E9E9E]">{{ textoResultados() }}</span>
         <select
           [value]="criterioOrden()"
           (change)="actualizarOrden($event)"
