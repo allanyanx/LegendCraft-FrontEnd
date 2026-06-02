@@ -7,6 +7,7 @@ import {
   computed,
   afterNextRender,
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
 import { ProductCard } from './components/product-card/product-card';
 import { ProductSkeleton } from './components/product-skeleton/product-skeleton';
@@ -26,13 +27,14 @@ export class Shop implements OnInit, OnDestroy {
   // INYECCIONES DE DEPENDENCIAS
   private articuloService = inject(ArticuloService);
   private categoriaService = inject(CategoriaService);
+  private route = inject(ActivatedRoute);
 
   // ESTADOS BASE (WRITABLE SIGNALS)
   // -- Carga, Datos y UI --
   isLoading = signal<boolean>(true);
   articulos = signal<Articulo[]>([]);
   categorias = signal<Categoria[]>([]);
-  terminoBusqueda = signal<string | null>('Warhammer'); // Simulado
+  terminoBusqueda = signal<string>('');
   isFilterMenuOpen = signal<boolean>(false);
 
   // -- Filtros Activos y UI de Filtros --
@@ -58,6 +60,17 @@ export class Shop implements OnInit, OnDestroy {
   itemsPorPagina = signal<number>(20); // Valor por defecto antes del cálculo móvil
 
   // ESTADOS DERIVADOS (COMPUTED SIGNALS)
+  // Calcula exactamente qué rango estamos viendo
+  textoResultados = computed(() => {
+    const total = this.articulosFiltrados().length;
+    if (total === 0) return '0 resultados encontrados';
+
+    const inicio = (this.paginaActual() - 1) * this.itemsPorPagina() + 1;
+    const fin = Math.min(this.paginaActual() * this.itemsPorPagina(), total);
+
+    return `Mostrando ${inicio} - ${fin} de ${total} resultados`;
+  });
+
   // Extrae los atributos únicos de los artículos para construir el menú de filtros
   filtrosDisponibles = computed(() => {
     const arts = this.articulos();
@@ -84,6 +97,9 @@ export class Shop implements OnInit, OnDestroy {
     const activos = this.filtrosActivos();
     const pMax = this.precioMaximo();
     const orden = this.criterioOrden();
+    const busqueda = this.terminoBusqueda().toLowerCase().trim();
+
+    const mapaCategorias = new Map(this.categorias().map((c) => [c.id, c.nombre.toLowerCase()]));
 
     // Aplicar Filtros
     const filtrados = todos.filter((art) => {
@@ -101,7 +117,28 @@ export class Shop implements OnInit, OnDestroy {
         (art.atributos?.['tamano'] && activos.tamanos.includes(art.atributos['tamano']));
       const pasaPrecio = art.precio <= pMax;
 
-      return pasaCategoria && pasaFranquicia && pasaMaterial && pasaTamano && pasaPrecio;
+      //Lógica de Búsqueda Inteligente
+      let pasaBusqueda = true;
+
+      if (busqueda !== '') {
+        const enTitulo = art.nombre.toLowerCase().includes(busqueda);
+
+        const nombreCat = mapaCategorias.get(art.idCategoria) || '';
+        const enCategoria = nombreCat.includes(busqueda);
+
+        let enAtributos = false;
+        if (art.atributos) {
+          enAtributos = Object.values(art.atributos).some((val) =>
+            String(val).toLowerCase().includes(busqueda),
+          );
+        }
+
+        pasaBusqueda = enTitulo || enCategoria || enAtributos;
+      }
+
+      return (
+        pasaCategoria && pasaFranquicia && pasaMaterial && pasaTamano && pasaPrecio && pasaBusqueda
+      );
     });
 
     // Aplicar Ordenamiento
@@ -151,6 +188,12 @@ export class Shop implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Escuchamos la URL. Si cambia (ej. de ?q=zelda a ?q=mario), actualizamos la señal
+    this.route.queryParams.subscribe((params) => {
+      this.terminoBusqueda.set(params['q'] || '');
+      this.paginaActual.set(1);
+    });
+
     this.cargarDatos();
   }
 

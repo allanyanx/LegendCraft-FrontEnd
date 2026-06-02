@@ -1,4 +1,3 @@
-// src/app/shared/components/search-bar/search-bar.component.ts
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -15,7 +14,10 @@ export class SearchBar {
 
     if (busquedaLimpiada) {
       // Navega a la ruta del catálogo agregando ?q=termino_escrito
-      this.router.navigate(['/catalogo'], { queryParams: { q: busquedaLimpiada } });
+      this.router.navigate(['/shop'], { queryParams: { q: busquedaLimpiada } });
+    } else {
+      // Si el usuario borró el texto y presionó buscar, navegamos al catálogo sin parámetros
+      this.router.navigate(['/shop']);
     }
   }
 }
