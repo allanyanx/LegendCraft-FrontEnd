@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
-import { ProductCard } from './components/product-card/product-card';
+import { ProductCard } from '../../shared/components/product-card/product-card';
 import { ProductSkeleton } from './components/product-skeleton/product-skeleton';
 import { EmptyState } from './components/empty-state/empty-state';
 import { ArticuloService } from '../../core/services/articulo.service';
