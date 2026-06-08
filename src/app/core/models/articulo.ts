@@ -5,7 +5,7 @@ export interface Articulo {
   precio: number;
   stock: number;
   atributos: Record<string, any> | null;
-  urlImagen: string;
+  urlImagen: [];
   estadoActivo: boolean;
   fechaCreacion: string;
 }

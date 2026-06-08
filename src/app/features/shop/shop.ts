@@ -11,11 +11,11 @@ import { ActivatedRoute } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
 import { ProductCard } from '../../shared/components/product-card/product-card';
 import { ProductSkeleton } from './components/product-skeleton/product-skeleton';
-import { EmptyState } from './components/empty-state/empty-state';
 import { ArticuloService } from '../../core/services/articulo.service';
 import { CategoriaService } from '../../core/services/categoria.service';
 import { Categoria } from '../../core/models/categoria';
 import { Articulo } from '../../core/models/articulo';
+import { EmptyState } from './components/empty-state/empty-state';
 
 @Component({
   selector: 'app-shop',

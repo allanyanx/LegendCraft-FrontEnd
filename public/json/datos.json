@@ -18,7 +18,12 @@
         "material": "Resina SLA",
         "tamano": "Escala 1/8"
       },
-      "urlImagen": "https://placehold.co/400x400/2B2B2B/E53935?text=Tartaglia",
+      "urlImagen": [
+        "https://placehold.co/400x400/2B2B2B/E53935?text=Space+Marine",
+        "https://placehold.co/400x400/2B2B2B/E53935?text=Space+Marine",
+        "https://placehold.co/400x400/2B2B2B/E53935?text=Space+Marine",
+        "https://placehold.co/400x400/2B2B2B/E53935?text=Space+Marine"
+      ],
       "estadoActivo": true,
       "fechaCreacion": "2026-05-15T10:00:00Z"
     },
