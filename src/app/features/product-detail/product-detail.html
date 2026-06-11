@@ -1,0 +1,94 @@
+<div class="container px-6 py-8 mx-auto text-[#F5F5F5]">
+  @if (isLoading()) {
+    <div class="flex items-center justify-center h-64 animate-pulse">
+      <span class="text-xl font-bold text-[#9E9E9E]">Cargando información...</span>
+    </div>
+  } @else if (articulo(); as prod) {
+    <button
+      onclick="history.back()"
+      class="flex items-center gap-2 mb-8 text-[#9E9E9E] hover:text-[#E53935] transition-colors"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        class="w-5 h-5"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+        />
+      </svg>
+      Volver al catálogo
+    </button>
+
+    <div class="grid grid-cols-1 gap-12 md:grid-cols-2">
+      <div
+        class="w-full overflow-hidden border rounded-lg bg-[#2B2B2B] border-[#2B2B2B] aspect-[4/5]"
+      >
+        <img [src]="prod.urlImagen" [alt]="prod.nombre" class="object-cover w-full h-full" />
+      </div>
+
+      <div class="flex flex-col">
+        <h1 class="mb-4 text-4xl font-bold text-white">{{ prod.nombre }}</h1>
+        <p class="text-3xl font-bold text-[#E53935] mb-6">${{ prod.precio }}</p>
+
+        <div class="mb-8">
+          @if (prod.stock > 0) {
+            <span
+              class="px-3 py-1 text-sm font-semibold text-green-400 bg-green-400/10 rounded-full"
+              >En stock ({{ prod.stock }} disponibles)</span
+            >
+          } @else {
+            <span
+              class="px-3 py-1 text-sm font-semibold text-[#E53935] bg-[#E53935]/10 rounded-full"
+              >Agotado</span
+            >
+          }
+        </div>
+
+        <div class="p-6 mb-8 border rounded-lg bg-[#1A1A1A] border-[#2B2B2B]">
+          <h3 class="mb-4 text-lg font-bold border-b border-[#2B2B2B] pb-2">Especificaciones</h3>
+          <ul class="flex flex-col gap-3">
+            @for (attr of listaAtributos(); track attr[0]) {
+              <li class="flex justify-between text-sm">
+                <span class="text-[#9E9E9E] capitalize">{{ attr[0] }}</span>
+                <span class="font-semibold text-white">{{ attr[1] }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <div class="flex flex-col gap-4 mt-auto sm:flex-row">
+          <div class="flex items-center border border-[#2B2B2B] rounded-lg bg-[#1A1A1A] w-32">
+            <button
+              (click)="cambiarCantidad(-1)"
+              class="px-4 py-3 text-[#9E9E9E] hover:text-white disabled:opacity-50"
+              [disabled]="prod.stock === 0 || cantidad() === 1"
+            >
+              -
+            </button>
+            <span class="flex-1 text-center font-semibold text-[#F5F5F5]">{{ cantidad() }}</span>
+            <button
+              (click)="cambiarCantidad(1)"
+              class="px-4 py-3 text-[#9E9E9E] hover:text-white disabled:opacity-50"
+              [disabled]="prod.stock === 0 || cantidad() === prod.stock"
+            >
+              +
+            </button>
+          </div>
+
+          <button
+            [disabled]="prod.stock === 0"
+            class="flex-1 px-8 py-3 font-bold text-white transition-colors rounded-lg bg-[#E53935] hover:bg-[#8E0000] disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {{ prod.stock === 0 ? 'No Disponible' : 'Agregar al Carrito' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
