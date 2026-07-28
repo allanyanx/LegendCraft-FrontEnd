@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AtributoTipo } from '../models/atributo';
+import { AtributoTipo } from '../models/atributo-tipo';
 import { environment } from '../../../environments/environment';
 
 @Injectable({

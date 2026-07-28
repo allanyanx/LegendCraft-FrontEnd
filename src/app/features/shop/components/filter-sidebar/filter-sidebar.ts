@@ -1,5 +1,5 @@
 import { Component, input, output, signal } from '@angular/core';
-import { AtributoTipo } from '../../../../core/models/atributo';
+import { AtributoTipo } from '../../../../core/models/atributo-tipo';
 
 @Component({
   selector: 'app-filter-sidebar',

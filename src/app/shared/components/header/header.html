@@ -28,23 +28,25 @@
     </div>
 
     <div class="flex items-center gap-4">
-      <button
-        (click)="login()"
-        class="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-[#E53935] hover:bg-[#8E0000] text-white text-xs font-semibold rounded-lg transition-colors shadow-sm"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          class="w-4 h-4 text-white/90"
+      @if (!authService.currentUser()) {
+        <button
+          (click)="login()"
+          class="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-[#E53935] hover:bg-[#8E0000] text-white text-xs font-semibold rounded-lg transition-colors shadow-sm"
         >
-          <circle cx="12" cy="6.5" r="3.5" />
-          <path
-            d="M5.25 14.25c0-1.242.827-2.316 2.01-2.65A12.023 12.023 0 0 1 12 11c1.644 0 3.195.33 4.74.9c1.183.334 2.01 1.408 2.01 2.65v2.1c0 .828-.672 1.5-1.5 1.5H6.75a1.5 1.5 0 0 1-1.5-1.5v-2.1Z"
-          />
-        </svg>
-        <span>Iniciar Sesión</span>
-      </button>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-white/90">
+            <circle cx="12" cy="6.5" r="3.5" />
+            <path d="M5.25 14.25c0-1.242.827-2.316 2.01-2.65A12.023 12.023 0 0 1 12 11c1.644 0 3.195.33 4.74.9c1.183.334 2.01 1.408 2.01 2.65v2.1c0 .828-.672 1.5-1.5 1.5H6.75a1.5 1.5 0 0 1-1.5-1.5v-2.1Z" />
+          </svg>
+          <span>Iniciar Sesión</span>
+        </button>
+      } @else {
+        <button
+          (click)="perfil()"
+          class="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-[#1A1A1A] border border-[#2B2B2B] hover:bg-[#2B2B2B] text-white text-xs font-semibold rounded-lg transition-colors shadow-sm"
+        >
+          <span>Hola, {{ authService.currentUser()?.firstName }}</span>
+        </button>
+      }
 
       <app-cart-widget></app-cart-widget>
 
@@ -143,23 +145,25 @@
     </div>
 
     <div class="pt-6 mt-auto border-t border-[#2B2B2B]">
-      <button
-        (click)="login(); toggleSidebar()"
-        class="flex items-center justify-center w-full gap-2 py-3 font-semibold text-white transition-colors shadow-md bg-[#E53935] hover:bg-[#8E0000] rounded-xl"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          class="w-5 h-5 text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]"
+      @if (!authService.currentUser()) {
+        <button
+          (click)="login(); toggleSidebar()"
+          class="flex items-center justify-center w-full gap-2 py-3 font-semibold text-white transition-colors shadow-md bg-[#E53935] hover:bg-[#8E0000] rounded-xl"
         >
-          <circle cx="12" cy="6.5" r="3.5" />
-          <path
-            d="M5.25 14.25c0-1.242.827-2.316 2.01-2.65A12.023 12.023 0 0 1 12 11c1.644 0 3.195.33 4.74.9c1.183.334 2.01 1.408 2.01 2.65v2.1c0 .828-.672 1.5-1.5 1.5H6.75a1.5 1.5 0 0 1-1.5-1.5v-2.1Z"
-          />
-        </svg>
-        <span>Panel Administrador</span>
-      </button>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
+            <circle cx="12" cy="6.5" r="3.5" />
+            <path d="M5.25 14.25c0-1.242.827-2.316 2.01-2.65A12.023 12.023 0 0 1 12 11c1.644 0 3.195.33 4.74.9c1.183.334 2.01 1.408 2.01 2.65v2.1c0 .828-.672 1.5-1.5 1.5H6.75a1.5 1.5 0 0 1-1.5-1.5v-2.1Z" />
+          </svg>
+          <span>Iniciar Sesión</span>
+        </button>
+      } @else {
+        <button
+          (click)="perfil(); toggleSidebar()"
+          class="flex items-center justify-center w-full gap-2 py-3 font-semibold text-white transition-colors shadow-md bg-[#2B2B2B] hover:bg-[#1A1A1A] rounded-xl"
+        >
+          <span>Mi Perfil ({{ authService.currentUser()?.firstName }})</span>
+        </button>
+      }
     </div>
   </div>
 </div>

@@ -1,7 +1,4 @@
-export interface AtributoValor {
-  id: number;
-  value: string;
-}
+import { AtributoValor } from './atributo-valor';
 
 export interface AtributoTipo {
   id: number;

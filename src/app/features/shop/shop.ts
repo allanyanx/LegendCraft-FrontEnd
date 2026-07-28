@@ -13,7 +13,7 @@ import { ProductSkeleton } from './components/product-skeleton/product-skeleton'
 import { ArticuloService } from '../../core/services/articulo.service';
 import { AtributoService } from '../../core/services/atributo.service';
 import { ArticuloLista } from '../../core/models/articulo-lista';
-import { AtributoTipo } from '../../core/models/atributo';
+import { AtributoTipo } from '../../core/models/atributo-tipo';
 import { EmptyState } from './components/empty-state/empty-state';
 import { FilterSidebar } from './components/filter-sidebar/filter-sidebar';
 
