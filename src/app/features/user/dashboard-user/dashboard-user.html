@@ -29,14 +29,14 @@
           
           <div class="px-6 pb-6">
             <div class="w-20 h-20 bg-[#2B2B2B] rounded-full border-4 border-[#1A1A1A] flex items-center justify-center text-3xl font-black text-white -mt-10 mb-4 shadow-lg relative z-10">
-              {{ profileFirstName() ? profileFirstName().charAt(0).toUpperCase() : '' }}{{ profileLastName() ? profileLastName().charAt(0).toUpperCase() : '' }}
+              {{ authService.currentUser()?.firstName?.charAt(0)?.toUpperCase() || '' }}{{ authService.currentUser()?.lastName?.charAt(0)?.toUpperCase() || '' }}
             </div>
             
             <div>
               @if (!isEditingProfile()) {
                 <div class="flex justify-between items-start">
                   <div>
-                    <h3 class="text-xl font-bold text-white capitalize">{{ profileFirstName() }} {{ profileLastName() }}</h3>
+                    <h3 class="text-xl font-bold text-white capitalize">{{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}</h3>
                     <p class="text-neutral-400 text-sm mt-1 flex items-center gap-1.5">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-neutral-500">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
@@ -55,19 +55,19 @@
                   <p class="text-green-500 text-xs mt-3 bg-green-500/10 p-2 rounded-md border border-green-500/20">{{ profileSuccess() }}</p>
                 }
               } @else {
-                <form (ngSubmit)="updateProfile()" class="space-y-4">
+                <form [formGroup]="profileForm" (ngSubmit)="updateProfile()" class="space-y-4">
                   <div class="flex justify-between items-center mb-2">
                     <h4 class="font-bold text-white text-sm">Modificar Datos</h4>
                     <button type="button" (click)="isEditingProfile.set(false)" class="text-neutral-500 hover:text-white text-xs">Cancelar</button>
                   </div>
                   <div>
-                    <input type="text" name="firstName" [ngModel]="profileFirstName()" (ngModelChange)="profileFirstName.set($event)" class="w-full bg-[#2B2B2B] border border-neutral-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#E53935]" placeholder="Nombre" required />
+                    <input type="text" formControlName="firstName" class="w-full bg-[#2B2B2B] border border-neutral-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#E53935]" placeholder="Nombre" required />
                   </div>
                   <div>
-                    <input type="text" name="lastName" [ngModel]="profileLastName()" (ngModelChange)="profileLastName.set($event)" class="w-full bg-[#2B2B2B] border border-neutral-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#E53935]" placeholder="Apellido" required />
+                    <input type="text" formControlName="lastName" class="w-full bg-[#2B2B2B] border border-neutral-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#E53935]" placeholder="Apellido" required />
                   </div>
                   @if (profileError()) { <p class="text-red-500 text-xs">{{ profileError() }}</p> }
-                  <button type="submit" [disabled]="isUpdatingProfile()" class="w-full bg-[#E53935] hover:bg-[#8E0000] text-white font-medium py-2 rounded-lg text-sm transition-colors disabled:opacity-50">
+                  <button type="submit" [disabled]="isUpdatingProfile() || profileForm.invalid" class="w-full bg-[#E53935] hover:bg-[#8E0000] text-white font-medium py-2 rounded-lg text-sm transition-colors disabled:opacity-50">
                     {{ isUpdatingProfile() ? 'Guardando...' : 'Guardar Cambios' }}
                   </button>
                 </form>
@@ -95,22 +95,22 @@
               <p class="text-green-500 text-xs mt-3 bg-green-500/10 p-2 rounded-md border border-green-500/20">{{ passwordSuccess() }}</p>
             }
           } @else {
-            <form (ngSubmit)="changePassword()" class="space-y-4 relative z-10">
+            <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="space-y-4 relative z-10">
               <div class="flex justify-between items-center mb-2">
                 <h4 class="font-bold text-white text-sm">Cambiar Contraseña</h4>
                 <button type="button" (click)="isEditingPassword.set(false)" class="text-neutral-500 hover:text-white text-xs">Cancelar</button>
               </div>
               <div>
-                <input type="password" name="currentPassword" [ngModel]="currentPassword()" (ngModelChange)="currentPassword.set($event)" class="w-full bg-[#2B2B2B] border border-neutral-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#E53935]" placeholder="Contraseña Actual" required />
+                <input type="password" formControlName="currentPassword" class="w-full bg-[#2B2B2B] border border-neutral-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#E53935]" placeholder="Contraseña Actual" required />
               </div>
               <div>
-                <input type="password" name="newPassword" [ngModel]="newPassword()" (ngModelChange)="newPassword.set($event)" class="w-full bg-[#2B2B2B] border border-neutral-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#E53935]" placeholder="Nueva Contraseña" required />
+                <input type="password" formControlName="newPassword" class="w-full bg-[#2B2B2B] border border-neutral-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#E53935]" placeholder="Nueva Contraseña" required />
               </div>
               <div>
-                <input type="password" name="confirmNewPassword" [ngModel]="confirmNewPassword()" (ngModelChange)="confirmNewPassword.set($event)" class="w-full bg-[#2B2B2B] border border-neutral-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#E53935]" placeholder="Confirmar Nueva Contraseña" required />
+                <input type="password" formControlName="confirmNewPassword" class="w-full bg-[#2B2B2B] border border-neutral-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#E53935]" placeholder="Confirmar Nueva Contraseña" required />
               </div>
               @if (passwordError()) { <p class="text-red-500 text-xs">{{ passwordError() }}</p> }
-              <button type="submit" [disabled]="isUpdatingPassword()" class="w-full bg-white text-black font-bold py-2 rounded-lg text-sm transition-colors hover:bg-neutral-200 disabled:opacity-50">
+              <button type="submit" [disabled]="isUpdatingPassword() || passwordForm.invalid" class="w-full bg-white text-black font-bold py-2 rounded-lg text-sm transition-colors hover:bg-neutral-200 disabled:opacity-50">
                 {{ isUpdatingPassword() ? 'Actualizando...' : 'Confirmar Cambio' }}
               </button>
             </form>

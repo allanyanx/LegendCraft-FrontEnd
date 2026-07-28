@@ -48,7 +48,7 @@ export class AuthService {
     this.currentUser.set(null);
   }
 
-  private handleAuthResponse(response: AuthResponse) {
+  public handleAuthResponse(response: AuthResponse) {
     if (typeof window !== 'undefined') {
       localStorage.setItem('token', response.token);
       // Guardamos la info básica para recuperarla si refresca la página
