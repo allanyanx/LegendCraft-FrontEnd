@@ -1,76 +1,38 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+import { AdminProfileComponent } from './admin-profile.component';
+import { AdminArticlesComponent } from './admin-articles.component';
+import { AdminOrdersComponent } from './admin-orders.component';
+import { AdminUsersComponent } from './admin-users.component';
 
 @Component({
   selector: 'app-dashboard-admin',
   templateUrl: './dashboard-admin.html',
   styleUrl: './dashboard-admin.css',
-  imports: [FormsModule],
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterLink,
+    AdminProfileComponent,
+    AdminArticlesComponent,
+    AdminOrdersComponent,
+    AdminUsersComponent
+  ],
 })
 export class DashboardAdmin {
-  seccionActiva: string = '';
+  activeTab: string = 'articles';
+  authService = inject(AuthService);
+  router = inject(Router);
 
-  // datos del formulario
-  nuevoArticulo = {
-    nombre: '',
-    descripcion: '',
-    precio: 0,
-    stock: 0,
-    idCategoria: null,
-    urlImagen: '',
-    estadoActivo: true,
-  };
-
-  // atributos dinámicos
-  atributos: { clave: string; valor: string }[] = [];
-
-  // categorías (después vendrán del backend)
-  categorias = [
-    { id: 1, nombre: 'Cosplay & Props' },
-    { id: 2, nombre: 'Figuras & Dioramas' },
-    { id: 3, nombre: 'Máscaras' },
-    { id: 4, nombre: 'Llaveros & Miniaturas' },
-    { id: 5, nombre: 'Accesorios Gamer' },
-  ];
-
-  mostrarCrear() {
-    this.seccionActiva = 'crear';
-  }
-  mostrarEditar() {
-    this.seccionActiva = 'editar';
+  setTab(tab: string) {
+    this.activeTab = tab;
   }
 
-  agregarAtributo() {
-    this.atributos.push({ clave: '', valor: '' });
-  }
-
-  eliminarAtributo(index: number) {
-    this.atributos.splice(index, 1);
-  }
-
-  onArchivoSeleccionado(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      // por ahora solo guardamos el nombre
-      this.nuevoArticulo.urlImagen = input.files[0].name;
-    }
-  }
-
-  crearArticulo() {
-    const atributosJSON = this.atributos.reduce(
-      (obj, atributo) => {
-        obj[atributo.clave] = atributo.valor;
-        return obj;
-      },
-      {} as Record<string, string>,
-    );
-
-    const payload = {
-      ...this.nuevoArticulo,
-      atributos: atributosJSON,
-    };
-
-    console.log('Artículo a enviar:', payload);
-    // aquí después llamarás a tu servicio HTTP
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/home']);
   }
 }
+

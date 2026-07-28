@@ -43,6 +43,7 @@ export class AuthService {
   logout() {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');
     }
     this.currentUser.set(null);
@@ -51,6 +52,7 @@ export class AuthService {
   public handleAuthResponse(response: AuthResponse) {
     if (typeof window !== 'undefined') {
       localStorage.setItem('token', response.token);
+      localStorage.setItem('refreshToken', response.refreshToken);
       // Guardamos la info básica para recuperarla si refresca la página
       localStorage.setItem('user', JSON.stringify({ 
         email: response.email, 
@@ -60,6 +62,12 @@ export class AuthService {
       }));
     }
     this.currentUser.set(response);
+  }
+
+  refreshToken(token: string, refreshToken: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/refresh-token`, { token, refreshToken }).pipe(
+      tap(response => this.handleAuthResponse(response))
+    );
   }
 
   private checkToken() {

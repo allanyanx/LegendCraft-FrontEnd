@@ -37,7 +37,12 @@ export class Header {
   }
   
   perfil() {
-    this.router.navigate(['/dashboard-user']); // <- Lo construiremos después
+    const user = this.authService.currentUser();
+    if (user && user.roles && user.roles.includes('Admin')) {
+      this.router.navigate(['/dashboard-admin']);
+    } else {
+      this.router.navigate(['/dashboard-user']);
+    }
   }
 
   toggleSidebar() {

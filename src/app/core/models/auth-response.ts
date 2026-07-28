@@ -5,4 +5,5 @@ export interface AuthResponse {
   lastName: string;
   expiration: Date;
   roles?: string[];
+  refreshToken: string;
 }

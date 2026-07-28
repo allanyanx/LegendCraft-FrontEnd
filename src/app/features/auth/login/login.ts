@@ -29,9 +29,13 @@ export class Login {
 
     this.authService.login({ email: this.email(), password: this.password() })
       .subscribe({
-        next: () => {
+        next: (res) => {
           this.isLoading.set(false);
-          this.router.navigate(['/home']); // Redirigiremos al home o al dashboard
+          if (res.roles && res.roles.includes('Admin')) {
+            this.router.navigate(['/dashboard-admin']);
+          } else {
+            this.router.navigate(['/home']);
+          }
         },
         error: (err) => {
           this.isLoading.set(false);
