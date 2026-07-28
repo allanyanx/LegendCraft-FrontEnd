@@ -4,6 +4,8 @@ import { environment } from '../../../environments/environment';
 import { AuthResponse } from '../models/auth-response';
 import { LoginRequest } from '../models/login-request';
 import { RegisterRequest } from '../models/register-request';
+import { UpdateProfileRequest } from '../models/update-profile-request';
+import { ChangePasswordRequest } from '../models/change-password-request';
 import { Observable, tap } from 'rxjs';
 
 @Injectable({
@@ -30,6 +32,14 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/register`, data);
   }
 
+  updateProfile(data: UpdateProfileRequest): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/update-profile`, data);
+  }
+
+  changePassword(data: ChangePasswordRequest): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/change-password`, data);
+  }
+
   logout() {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('token');
@@ -44,7 +54,9 @@ export class AuthService {
       // Guardamos la info básica para recuperarla si refresca la página
       localStorage.setItem('user', JSON.stringify({ 
         email: response.email, 
-        firstName: response.firstName 
+        firstName: response.firstName,
+        lastName: response.lastName,
+        roles: response.roles 
       }));
     }
     this.currentUser.set(response);
