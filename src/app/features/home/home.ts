@@ -25,6 +25,10 @@ export class Home implements OnInit, OnDestroy {
   // PRODUCTOS RECIENTES
   articulosRecientes = signal<ArticuloLista[]>([]);
   isLoading = signal<boolean>(true);
+  categoriaActiva = signal<string>('Nuevos');
+  
+  // Caché local para no sobrecargar el backend
+  private cacheProductos = new Map<string, ArticuloLista[]>();
 
   // CARRUSEL
   diapositivas: CarouselSlide[] = [
@@ -36,7 +40,7 @@ export class Home implements OnInit, OnDestroy {
     {
       title: 'Impresión Bajo Demanda',
       description: 'Si no lo tenemos en stock, lo imprimimos especialmente para ti.',
-      imageUrl: 'https://placehold.co/400x500/2B2B2B/C09F6F?text=Impresion+3D',
+      imageUrl: 'https://placehold.co/400x500/2B2B2B/FFFFFF?text=Impresion+3D',
     },
     {
       title: 'Cosplay & Props',
@@ -64,17 +68,35 @@ export class Home implements OnInit, OnDestroy {
   ];
 
   ngOnInit() {
-    // 1. Cargar últimos 4 productos
-    this.articuloService.getArticulos(1, 4, '').subscribe({
+    this.cargarProductosPreview();
+    this.iniciarCarrusel();
+  }
+
+  cargarProductosPreview() {
+    const busqueda = this.categoriaActiva() === 'Nuevos' ? '' : this.categoriaActiva();
+    
+    // 1. Revisar si ya tenemos esta categoría en caché
+    if (this.cacheProductos.has(busqueda)) {
+      this.articulosRecientes.set(this.cacheProductos.get(busqueda)!);
+      return;
+    }
+
+    // 2. Si no está en caché, le pedimos al backend
+    this.isLoading.set(true);
+    this.articuloService.getArticulos(1, 4, busqueda).subscribe({
       next: (res) => {
         this.articulosRecientes.set(res.items);
+        // Guardamos en caché para futuras consultas
+        this.cacheProductos.set(busqueda, res.items);
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false)
     });
+  }
 
-    // 2. Iniciar carrusel
-    this.iniciarCarrusel();
+  cambiarCategoria(categoria: string) {
+    this.categoriaActiva.set(categoria);
+    this.cargarProductosPreview();
   }
 
   ngOnDestroy() {

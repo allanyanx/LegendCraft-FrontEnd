@@ -41,33 +41,30 @@
   <h3 class="mb-6 text-2xl font-bold tracking-wide text-center text-white">Nuevos Lanzamientos</h3>
 
   <div class="flex flex-wrap justify-center gap-3 mb-8">
-    <a
-      routerLink="/shop"
-      [queryParams]="{ q: 'Animado' }"
-      class="px-5 py-2 bg-[#E53935] text-white font-semibold rounded-full text-sm transition hover:bg-[#8E0000]"
+    <button
+      (click)="cambiarCategoria('Nuevos')"
+      [class]="categoriaActiva() === 'Nuevos' ? 'px-5 py-2 bg-[#E53935] text-white font-semibold rounded-full text-sm transition' : 'px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-white'"
+    >
+      Nuevos
+    </button>
+    <button
+      (click)="cambiarCategoria('Animado')"
+      [class]="categoriaActiva() === 'Animado' ? 'px-5 py-2 bg-[#E53935] text-white font-semibold rounded-full text-sm transition' : 'px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-white'"
     >
       Animados
-    </a>
-    <a
-      routerLink="/shop"
-      [queryParams]="{ q: 'Oferta' }"
-      class="px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-[#C09F6F] hover:text-[#C09F6F]"
+    </button>
+    <button
+      (click)="cambiarCategoria('Oferta')"
+      [class]="categoriaActiva() === 'Oferta' ? 'px-5 py-2 bg-[#E53935] text-white font-semibold rounded-full text-sm transition' : 'px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-white'"
     >
       Ofertas
-    </a>
-    <a
-      routerLink="/shop"
-      class="px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-[#C09F6F] hover:text-[#C09F6F]"
-    >
-      Ver Todo
-    </a>
-    <a
-      routerLink="/shop"
-      [queryParams]="{ q: 'Preventa' }"
-      class="px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-[#C09F6F] hover:text-[#C09F6F]"
+    </button>
+    <button
+      (click)="cambiarCategoria('Preventa')"
+      [class]="categoriaActiva() === 'Preventa' ? 'px-5 py-2 bg-[#E53935] text-white font-semibold rounded-full text-sm transition' : 'px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-white'"
     >
       Preventa
-    </a>
+    </button>
   </div>
 
   <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
