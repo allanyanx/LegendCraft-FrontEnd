@@ -4,14 +4,14 @@ import { Observable } from 'rxjs';
 import { ArticuloLista } from '../models/articulo-lista';
 import { ArticuloDetalle } from '../models/articulo-detalle';
 import { PagedResult } from '../models/paged-result';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ArticuloService {
   private http = inject(HttpClient);
-  // NOTA: Temporalmente apuntando al backend real, luego se usará environment.ts
-  private apiUrl = 'http://localhost:5000/api/articles';
+  private apiUrl = `${environment.apiUrl}/articles`;
 
   getArticulos(pageNumber: number = 1, pageSize: number = 20, search: string = '', attributeValues: number[] = []): Observable<PagedResult<ArticuloLista>> {
     let url = `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`;
