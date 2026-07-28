@@ -145,112 +145,33 @@
     </div>
   </div>
 
-  <div class="mb-8">
-    <h3 class="mb-4 text-lg font-bold border-b border-[#2B2B2B] pb-2">Categorías</h3>
-    <div class="flex flex-col gap-2">
-      @let limitCat = filtrosExpandidos().categorias ? categorias().length : 5;
+  <!-- Bucle dinámico sobre los Atributos que vienen de la Base de Datos -->
+  @for (tipo of atributosDisponibles(); track tipo.id) {
+    <div class="mb-8">
+      <h3 class="mb-4 text-lg font-bold border-b border-[#2B2B2B] pb-2">{{ tipo.name }}</h3>
+      <div class="flex flex-col gap-2">
+        @let limit = filtrosExpandidos()[tipo.id] ? tipo.values.length : 5;
 
-      @for (cat of categorias().slice(0, limitCat); track cat.id) {
-        <label class="flex items-center gap-2 text-sm cursor-pointer hover:text-white">
-          <input
-            type="checkbox"
-            class="accent-[#E53935]"
-            [checked]="filtrosActivos().categorias.includes(cat.id)"
-            (change)="toggleFiltro('categorias', cat.id)"
-          />
-          {{ cat.nombre }}
-        </label>
-      }
-      @if (categorias().length > 5) {
-        <button
-          (click)="toggleExpandir('categorias')"
-          class="self-start mt-2 text-xs font-semibold text-[#E53935] hover:underline"
-        >
-          {{ filtrosExpandidos().categorias ? 'Ver menos' : 'Ver más...' }}
-        </button>
-      }
+        @for (valor of tipo.values.slice(0, limit); track valor.id) {
+          <label class="flex items-center gap-2 text-sm cursor-pointer hover:text-white">
+            <input
+              type="checkbox"
+              class="accent-[#E53935]"
+              [checked]="filtrosActivos().has(valor.id)"
+              (change)="toggleFiltro(valor.id)"
+            />
+            {{ valor.value }}
+          </label>
+        }
+        @if (tipo.values.length > 5) {
+          <button
+            (click)="toggleExpandir(tipo.id)"
+            class="self-start mt-2 text-xs font-semibold text-[#E53935] hover:underline"
+          >
+            {{ filtrosExpandidos()[tipo.id] ? 'Ver menos' : 'Ver más...' }}
+          </button>
+        }
+      </div>
     </div>
-  </div>
-
-  <div class="mb-8">
-    <h3 class="mb-4 text-lg font-bold border-b border-[#2B2B2B] pb-2">Franquicia</h3>
-    <div class="flex flex-col gap-2">
-      @let limitFranq =
-        filtrosExpandidos().franquicias ? filtrosDisponibles().franquicias.length : 5;
-
-      @for (f of filtrosDisponibles().franquicias.slice(0, limitFranq); track $index) {
-        <label class="flex items-center gap-2 text-sm cursor-pointer hover:text-white">
-          <input
-            type="checkbox"
-            class="accent-[#E53935]"
-            [checked]="filtrosActivos().franquicias.includes(f)"
-            (change)="toggleFiltro('franquicias', f)"
-          />
-          {{ f }}
-        </label>
-      }
-      @if (filtrosDisponibles().franquicias.length > 5) {
-        <button
-          (click)="toggleExpandir('franquicias')"
-          class="self-start mt-2 text-xs font-semibold text-[#E53935] hover:underline"
-        >
-          {{ filtrosExpandidos().franquicias ? 'Ver menos' : 'Ver más...' }}
-        </button>
-      }
-    </div>
-  </div>
-
-  <div class="mb-8">
-    <h3 class="mb-4 text-lg font-bold border-b border-[#2B2B2B] pb-2">Tamaño</h3>
-    <div class="flex flex-col gap-2">
-      @let limitTamano = filtrosExpandidos().tamanos ? filtrosDisponibles().tamanos.length : 5;
-
-      @for (t of filtrosDisponibles().tamanos.slice(0, limitTamano); track $index) {
-        <label class="flex items-center gap-2 text-sm cursor-pointer hover:text-white">
-          <input
-            type="checkbox"
-            class="accent-[#E53935]"
-            [checked]="filtrosActivos().tamanos.includes(t)"
-            (change)="toggleFiltro('tamanos', t)"
-          />
-          {{ t }}
-        </label>
-      }
-      @if (filtrosDisponibles().tamanos.length > 5) {
-        <button
-          (click)="toggleExpandir('tamanos')"
-          class="self-start mt-2 text-xs font-semibold text-[#E53935] hover:underline"
-        >
-          {{ filtrosExpandidos().tamanos ? 'Ver menos' : 'Ver más...' }}
-        </button>
-      }
-    </div>
-  </div>
-
-  <div class="mb-8">
-    <h3 class="mb-4 text-lg font-bold border-b border-[#2B2B2B] pb-2">Material</h3>
-    <div class="flex flex-col gap-2">
-      @let limitMat = filtrosExpandidos().materiales ? filtrosDisponibles().materiales.length : 5;
-
-      @for (m of filtrosDisponibles().materiales.slice(0, limitMat); track $index) {
-        <label class="flex items-center gap-2 text-sm cursor-pointer hover:text-white">
-          <input
-            type="checkbox"
-            class="accent-[#E53935]"
-            [checked]="filtrosActivos().materiales.includes(m)"
-            (change)="toggleFiltro('materiales', m)"
-          />
-          {{ m }}
-        </label>
-      }
-      @if (filtrosDisponibles().materiales.length > 5) {
-        <button
-          (click)="toggleExpandir('materiales')"
-          class="self-start mt-2 text-xs font-semibold text-[#E53935] hover:underline"
-        >
-          {{ filtrosExpandidos().materiales ? 'Ver menos' : 'Ver más...' }}
-        </button>
-      }
-    </div>
-  </div>
+  }
 </ng-template>

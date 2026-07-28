@@ -13,8 +13,16 @@ export class ArticuloService {
   // NOTA: Temporalmente apuntando al backend real, luego se usará environment.ts
   private apiUrl = 'http://localhost:5000/api/articles';
 
-  getArticulos(pageNumber: number = 1, pageSize: number = 20, search: string = ''): Observable<PagedResult<ArticuloLista>> {
-    const url = `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`;
+  getArticulos(pageNumber: number = 1, pageSize: number = 20, search: string = '', attributeValues: number[] = []): Observable<PagedResult<ArticuloLista>> {
+    let url = `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`;
+    
+    // Adjuntamos los filtros como un array al QueryString (Ej: &attributeValues=1&attributeValues=3)
+    if (attributeValues && attributeValues.length > 0) {
+      attributeValues.forEach(val => {
+        url += `&attributeValues=${val}`;
+      });
+    }
+
     return this.http.get<PagedResult<ArticuloLista>>(url);
   }
 

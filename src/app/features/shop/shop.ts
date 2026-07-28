@@ -12,7 +12,9 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ProductCard } from '../../shared/components/product-card/product-card';
 import { ProductSkeleton } from './components/product-skeleton/product-skeleton';
 import { ArticuloService } from '../../core/services/articulo.service';
+import { AtributoService } from '../../core/services/atributo.service';
 import { ArticuloLista } from '../../core/models/articulo-lista';
+import { AtributoTipo } from '../../core/models/atributo';
 import { EmptyState } from './components/empty-state/empty-state';
 
 @Component({
@@ -23,6 +25,7 @@ import { EmptyState } from './components/empty-state/empty-state';
 })
 export class Shop implements OnInit, OnDestroy {
   private articuloService = inject(ArticuloService);
+  private atributoService = inject(AtributoService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -37,30 +40,16 @@ export class Shop implements OnInit, OnDestroy {
   paginaActual = signal<number>(1);
   itemsPorPagina = signal<number>(20);
 
-  // Filtros UI (Mantenidos temporalmente como stubs para que el HTML compile)
-  categorias = signal<any[]>([]);
+  // Filtros UI Dinámicos
+  atributosDisponibles = signal<AtributoTipo[]>([]);
   precioMaximo = signal<number>(200);
   criterioOrden = signal<string>('relevantes');
 
-  filtrosActivos = signal({
-    categorias: [] as number[],
-    franquicias: [] as string[],
-    materiales: [] as string[],
-    tamanos: [] as string[],
-  });
-
-  filtrosExpandidos = signal({
-    categorias: false,
-    franquicias: false,
-    materiales: false,
-    tamanos: false,
-  });
-
-  filtrosDisponibles = signal({
-    franquicias: [] as string[],
-    materiales: [] as string[],
-    tamanos: [] as string[],
-  });
+  // Set de IDs de los valores de atributo seleccionados
+  filtrosActivos = signal<Set<number>>(new Set());
+  
+  // Para saber si el bloque de "Ver más..." de un tipo específico está expandido
+  filtrosExpandidos = signal<Record<number, boolean>>({});
 
   // Computed
   textoResultados = computed(() => {
@@ -92,6 +81,11 @@ export class Shop implements OnInit, OnDestroy {
       this.terminoBusqueda.set(params['q'] || '');
       this.cargarDatos();
     });
+
+    // Cargar los atributos dinámicos una sola vez al inicializar
+    this.atributoService.getAtributos().subscribe({
+      next: (attrs) => this.atributosDisponibles.set(attrs)
+    });
   }
 
   ngOnDestroy(): void {
@@ -102,8 +96,11 @@ export class Shop implements OnInit, OnDestroy {
 
   cargarDatos() {
     this.isLoading.set(true);
-    // Llamada real al backend con paginación
-    this.articuloService.getArticulos(this.paginaActual(), this.itemsPorPagina(), this.terminoBusqueda())
+
+    const arrAtributos = Array.from(this.filtrosActivos());
+
+    // Llamada real al backend con paginación y atributos
+    this.articuloService.getArticulos(this.paginaActual(), this.itemsPorPagina(), this.terminoBusqueda(), arrAtributos)
       .subscribe({
         next: (response) => {
           this.articulos.set(response.items);
@@ -132,9 +129,37 @@ export class Shop implements OnInit, OnDestroy {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // Stubs para evitar errores en HTML temporalmente
-  toggleFiltro(tipo: any, valor: any) {}
-  toggleExpandir(filtro: any) {}
-  actualizarPrecio(event: Event) {}
-  actualizarOrden(event: Event) {}
+  // Lógica de Filtros Dinámicos
+  toggleFiltro(valorId: number) {
+    this.filtrosActivos.update((set) => {
+      const nuevoSet = new Set(set);
+      if (nuevoSet.has(valorId)) {
+        nuevoSet.delete(valorId);
+      } else {
+        nuevoSet.add(valorId);
+      }
+      return nuevoSet;
+    });
+    this.paginaActual.set(1);
+    
+    // NOTA: Para que estos filtros afecten realmente la lista de artículos,
+    // se debe actualizar el backend para que el endpoint soporte recibir 
+    // un arreglo de IDs (attributeValues) y luego enviar this.filtrosActivos() en cargarDatos().
+  }
+
+  toggleExpandir(tipoId: number) {
+    this.filtrosExpandidos.update((v) => ({ ...v, [tipoId]: !v[tipoId] }));
+  }
+
+  actualizarPrecio(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.precioMaximo.set(Number(input.value));
+    this.paginaActual.set(1);
+  }
+
+  actualizarOrden(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    this.criterioOrden.set(select.value);
+    this.paginaActual.set(1);
+  }
 }
