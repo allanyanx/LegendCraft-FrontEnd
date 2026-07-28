@@ -8,7 +8,6 @@ import {
   afterNextRender,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgTemplateOutlet } from '@angular/common';
 import { ProductCard } from '../../shared/components/product-card/product-card';
 import { ProductSkeleton } from './components/product-skeleton/product-skeleton';
 import { ArticuloService } from '../../core/services/articulo.service';
@@ -16,11 +15,12 @@ import { AtributoService } from '../../core/services/atributo.service';
 import { ArticuloLista } from '../../core/models/articulo-lista';
 import { AtributoTipo } from '../../core/models/atributo';
 import { EmptyState } from './components/empty-state/empty-state';
+import { FilterSidebar } from './components/filter-sidebar/filter-sidebar';
 
 @Component({
   selector: 'app-shop',
   standalone: true,
-  imports: [ProductCard, ProductSkeleton, EmptyState, NgTemplateOutlet],
+  imports: [ProductCard, ProductSkeleton, EmptyState, FilterSidebar],
   templateUrl: './shop.html',
 })
 export class Shop implements OnInit, OnDestroy {
@@ -47,9 +47,6 @@ export class Shop implements OnInit, OnDestroy {
 
   // Set de IDs de los valores de atributo seleccionados
   filtrosActivos = signal<Set<number>>(new Set());
-  
-  // Para saber si el bloque de "Ver más..." de un tipo específico está expandido
-  filtrosExpandidos = signal<Record<number, boolean>>({});
 
   // Computed
   textoResultados = computed(() => {
@@ -141,19 +138,11 @@ export class Shop implements OnInit, OnDestroy {
       return nuevoSet;
     });
     this.paginaActual.set(1);
-    
-    // NOTA: Para que estos filtros afecten realmente la lista de artículos,
-    // se debe actualizar el backend para que el endpoint soporte recibir 
-    // un arreglo de IDs (attributeValues) y luego enviar this.filtrosActivos() en cargarDatos().
+    this.cargarDatos(); // Llama a la API con los nuevos filtros
   }
 
-  toggleExpandir(tipoId: number) {
-    this.filtrosExpandidos.update((v) => ({ ...v, [tipoId]: !v[tipoId] }));
-  }
-
-  actualizarPrecio(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.precioMaximo.set(Number(input.value));
+  actualizarPrecioDirecto(nuevoPrecio: number) {
+    this.precioMaximo.set(nuevoPrecio);
     this.paginaActual.set(1);
   }
 

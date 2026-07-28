@@ -1,14 +1,10 @@
 import { Routes } from '@angular/router';
-import { Home } from './shared/components/home/home';
-import { Shop } from './features/shop/shop';
 
-import { DashboardAdmin } from './shared/components/dashboard-admin/dashboard-admin';
-import { ProductDetail } from './features/product-detail/product-detail';
 export const routes: Routes = [
-  { path: 'dashboard-admin', component: DashboardAdmin },
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'shop', component: Shop },
-  { path: 'producto/:id', component: ProductDetail },
-  { path: 'home', component: Home },
+  { path: 'home', loadComponent: () => import('./features/home/home').then(m => m.Home) },
+  { path: 'shop', loadComponent: () => import('./features/shop/shop').then(m => m.Shop) },
+  { path: 'producto/:id', loadComponent: () => import('./features/product-detail/product-detail').then(m => m.ProductDetail) },
+  { path: 'dashboard-admin', loadComponent: () => import('./features/admin/dashboard-admin/dashboard-admin').then(m => m.DashboardAdmin) },
   { path: '**', redirectTo: 'home' },
 ];
