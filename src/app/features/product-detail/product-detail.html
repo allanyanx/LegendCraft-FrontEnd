@@ -29,18 +29,23 @@
       <div
         class="w-full overflow-hidden border rounded-lg bg-[#2B2B2B] border-[#2B2B2B] aspect-[4/5]"
       >
-        <img [src]="prod.urlImagen" [alt]="prod.nombre" class="object-cover w-full h-full" />
+        <img [src]="prod.images.length ? prod.images[0].imageUrl : ''" [alt]="prod.name" class="object-cover w-full h-full" />
       </div>
 
       <div class="flex flex-col">
-        <h1 class="mb-4 text-4xl font-bold text-white">{{ prod.nombre }}</h1>
-        <p class="text-3xl font-bold text-[#E53935] mb-6">${{ prod.precio }}</p>
+        <h1 class="mb-4 text-4xl font-bold text-white">{{ prod.name }}</h1>
+        <p class="text-3xl font-bold text-[#E53935] mb-6">${{ prod.price }}</p>
 
         <div class="mb-8">
           @if (prod.stock > 0) {
             <span
               class="px-3 py-1 text-sm font-semibold text-green-400 bg-green-400/10 rounded-full"
               >En stock ({{ prod.stock }} disponibles)</span
+            >
+          } @else if (prod.isPrintOnDemand) {
+            <span
+              class="px-3 py-1 text-sm font-semibold text-blue-400 bg-blue-400/10 rounded-full"
+              >Impresión bajo demanda (toma {{ prod.printTimeDays }} días)</span
             >
           } @else {
             <span
@@ -75,17 +80,17 @@
             <button
               (click)="cambiarCantidad(1)"
               class="px-4 py-3 text-[#9E9E9E] hover:text-white disabled:opacity-50"
-              [disabled]="prod.stock === 0 || cantidad() === prod.stock"
+              [disabled]="(prod.stock === 0 && !prod.isPrintOnDemand) || (!prod.isPrintOnDemand && cantidad() === prod.stock) || cantidad() === 99"
             >
               +
             </button>
           </div>
 
           <button
-            [disabled]="prod.stock === 0"
+            [disabled]="prod.stock === 0 && !prod.isPrintOnDemand"
             class="flex-1 px-8 py-3 font-bold text-white transition-colors rounded-lg bg-[#E53935] hover:bg-[#8E0000] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {{ prod.stock === 0 ? 'No Disponible' : 'Agregar al Carrito' }}
+            {{ (prod.stock === 0 && !prod.isPrintOnDemand) ? 'No Disponible' : 'Agregar al Carrito' }}
           </button>
         </div>
       </div>
