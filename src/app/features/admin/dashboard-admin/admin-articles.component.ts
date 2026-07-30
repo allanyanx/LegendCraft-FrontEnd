@@ -31,6 +31,8 @@ export class AdminArticlesComponent {
   
   // Estado
   isCreating = false;
+  isEditing = false;
+  editingArticleId: number | null = null;
   isSaving = false;
   isLoading = true; // Inicia en true para mostrar spinner durante SSR
   isAttributesLoading = true;
@@ -46,6 +48,7 @@ export class AdminArticlesComponent {
   croppedImage: Blob | null | undefined = null;
   finalImages: File[] = [];
   finalImagesUrls: string[] = [];
+  existingImages: any[] = [];
   isProcessingImage = false;
 
   constructor() {
@@ -120,6 +123,8 @@ export class AdminArticlesComponent {
 
   toggleCreate() {
     this.isCreating = !this.isCreating;
+    this.isEditing = false;
+    this.editingArticleId = null;
     if (!this.isCreating) {
       this.resetForm();
     }
@@ -327,7 +332,97 @@ export class AdminArticlesComponent {
     this.selectedAttributeIds.clear();
     this.finalImages = [];
     this.finalImagesUrls = [];
+    this.existingImages = [];
     this.cancelCrop();
+  }
+
+  editArticle(id: number) {
+    this.isLoading = true;
+    this.articleService.getArticleById(id).subscribe({
+      next: (article) => {
+        this.isCreating = true;
+        this.isEditing = true;
+        this.editingArticleId = id;
+        
+        this.articleForm.patchValue({
+          name: article.name,
+          price: article.price,
+          stock: article.stock,
+          isPrintOnDemand: article.isPrintOnDemand,
+          printTimeDays: article.printTimeDays
+        });
+        
+        this.highlights.clear();
+        if (article.highlights && article.highlights.length > 0) {
+          article.highlights.forEach((h: string) => this.highlights.push(this.fb.control(h)));
+        } else {
+          this.addHighlight();
+        }
+        
+        this.selectedAttributeIds.clear();
+        if (article.attributes) {
+          for (const typeName in article.attributes) {
+            const valName = article.attributes[typeName];
+            const attrType = this.availableAttributes.find(a => a.name === typeName);
+            if (attrType && attrType.values) {
+              const attrVal = attrType.values.find((v: any) => v.value === valName);
+              if (attrVal) {
+                this.selectedAttributeIds.add(attrVal.id);
+              }
+            }
+          }
+        }
+        
+        this.existingImages = article.images || [];
+        this.finalImages = [];
+        this.finalImagesUrls = [];
+        
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        alert('Error al cargar el artículo.');
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  deleteArticle(id: number) {
+    if (confirm('¿Estás seguro de que deseas eliminar este artículo?')) {
+      this.articleService.deleteArticle(id).subscribe({
+        next: () => {
+          this.loadArticles(1);
+        },
+        error: () => {
+          alert('Error al eliminar el artículo.');
+        }
+      });
+    }
+  }
+
+  deleteExistingImage(imageId: number) {
+    if (!this.editingArticleId) return;
+    if (confirm('¿Eliminar esta imagen?')) {
+      this.articleService.deleteImage(this.editingArticleId, imageId).subscribe({
+        next: () => {
+          this.existingImages = this.existingImages.filter(img => img.id !== imageId);
+          this.cdr.detectChanges();
+        },
+        error: () => alert('Error al eliminar imagen.')
+      });
+    }
+  }
+
+  setExistingMainImage(imageId: number) {
+    if (!this.editingArticleId) return;
+    this.articleService.setMainImage(this.editingArticleId, imageId).subscribe({
+      next: () => {
+        this.existingImages.forEach(img => img.isMain = img.id === imageId);
+        this.cdr.detectChanges();
+      },
+      error: () => alert('Error al establecer imagen principal.')
+    });
   }
 
   onSubmit() {
@@ -349,29 +444,51 @@ export class AdminArticlesComponent {
       attributeValueIds: Array.from(this.selectedAttributeIds)
     };
 
-    this.articleService.createArticle(request).subscribe({
-      next: (res) => {
-        // El backend de C# devuelve { ArticleId: 123 }, que en Angular se lee como res.articleId (camelCase automático)
-        const articleId = res.articleId; 
-        
-        // Si hay imágenes, subirlas
-        if (this.finalImages.length > 0 && articleId) {
-          this.articleService.uploadArticleImages(articleId, this.finalImages).subscribe({
-            next: () => this.finalizeCreation(),
-            error: () => {
-              alert('Artículo creado, pero falló la subida de imágenes. Tendrás que subirlas luego.');
-              this.finalizeCreation();
-            }
-          });
-        } else {
-          this.finalizeCreation();
+    if (this.isEditing && this.editingArticleId) {
+      this.articleService.updateArticle(this.editingArticleId, request).subscribe({
+        next: () => {
+          if (this.finalImages.length > 0) {
+            this.articleService.uploadArticleImages(this.editingArticleId!, this.finalImages).subscribe({
+              next: () => this.finalizeCreation(),
+              error: () => {
+                alert('Artículo actualizado, pero falló la subida de nuevas imágenes.');
+                this.finalizeCreation();
+              }
+            });
+          } else {
+            this.finalizeCreation();
+          }
+        },
+        error: () => {
+          alert('Error al actualizar el artículo.');
+          this.isSaving = false;
         }
-      },
-      error: (err) => {
-        alert('Error al crear el artículo. Verifica la conexión.');
-        this.isSaving = false;
-      }
-    });
+      });
+    } else {
+      this.articleService.createArticle(request).subscribe({
+        next: (res) => {
+          // El backend de C# devuelve { ArticleId: 123 }, que en Angular se lee como res.articleId (camelCase automático)
+          const articleId = res.articleId; 
+          
+          // Si hay imágenes, subirlas
+          if (this.finalImages.length > 0 && articleId) {
+            this.articleService.uploadArticleImages(articleId, this.finalImages).subscribe({
+              next: () => this.finalizeCreation(),
+              error: () => {
+                alert('Artículo creado, pero falló la subida de imágenes. Tendrás que subirlas luego.');
+                this.finalizeCreation();
+              }
+            });
+          } else {
+            this.finalizeCreation();
+          }
+        },
+        error: (err) => {
+          alert('Error al crear el artículo. Verifica la conexión.');
+          this.isSaving = false;
+        }
+      });
+    }
   }
 
   private finalizeCreation() {

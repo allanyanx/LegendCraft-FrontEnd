@@ -33,4 +33,24 @@ export class ArticleService {
     images.forEach((img, index) => formData.append('files', img, img.name || `image_${index}.webp`));
     return this.http.post<any>(`${this.apiUrl}/${articleId}/images`, formData);
   }
+
+  getArticleById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+
+  updateArticle(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, data, { responseType: 'text' });
+  }
+
+  deleteArticle(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
+  }
+
+  deleteImage(articleId: number, imageId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${articleId}/images/${imageId}`, { responseType: 'text' });
+  }
+
+  setMainImage(articleId: number, imageId: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${articleId}/images/${imageId}/set-main`, {}, { responseType: 'text' });
+  }
 }
