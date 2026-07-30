@@ -3,6 +3,7 @@ import { SearchBar } from '../search-bar/search-bar';
 import { CartWidget } from '../cart-widget/cart-widget';
 import { Router, NavigationEnd, RouterModule } from '@angular/router';
 import { filter } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -15,6 +16,7 @@ export class Header {
   isSidebarOpen = false;
   isShopRoute = false; // Variable reactiva para la barra de búsqueda
   private router = inject(Router);
+  authService = inject(AuthService);
 
   constructor() {
     this.validarRutaTienda(this.router.url);
@@ -31,8 +33,16 @@ export class Header {
   }
 
   login() {
-    console.log('Redirigiendo provisionalmente al dashboard...');
-    this.router.navigate(['/dashboard-admin']);
+    this.router.navigate(['/auth/login']);
+  }
+  
+  perfil() {
+    const user = this.authService.currentUser();
+    if (user && user.roles && user.roles.includes('Admin')) {
+      this.router.navigate(['/dashboard-admin']);
+    } else {
+      this.router.navigate(['/dashboard-user']);
+    }
   }
 
   toggleSidebar() {

@@ -1,0 +1,46 @@
+<div class="mb-8">
+  <h3 class="mb-4 text-lg font-bold border-b border-[#2B2B2B] pb-2">Precio</h3>
+  <div class="flex flex-col gap-2 mt-4">
+    <input
+      type="range"
+      min="0"
+      max="300"
+      class="w-full accent-[#E53935]"
+      [value]="precioMaximo()"
+      (input)="onPrecioChange.emit($any($event.target).valueAsNumber)"
+    />
+    <div class="flex justify-between text-sm text-[#9E9E9E]">
+      <span>$0</span>
+      <span class="font-bold text-[#F5F5F5]">Hasta: ${{ precioMaximo() }}</span>
+    </div>
+  </div>
+</div>
+
+@for (tipo of atributosDisponibles(); track tipo.id) {
+  <div class="mb-8">
+    <h3 class="mb-4 text-lg font-bold border-b border-[#2B2B2B] pb-2">{{ tipo.name }}</h3>
+    <div class="flex flex-col gap-2">
+      @let limit = filtrosExpandidos()[tipo.id] ? tipo.values.length : 5;
+
+      @for (valor of tipo.values.slice(0, limit); track valor.id) {
+        <label class="flex items-center gap-2 text-sm cursor-pointer hover:text-white">
+          <input
+            type="checkbox"
+            class="accent-[#E53935]"
+            [checked]="filtrosActivos().has(valor.id)"
+            (change)="onFiltroToggle.emit(valor.id)"
+          />
+          {{ valor.value }}
+        </label>
+      }
+      @if (tipo.values.length > 5) {
+        <button
+          (click)="toggleExpandir(tipo.id)"
+          class="self-start mt-2 text-xs font-semibold text-[#E53935] hover:underline"
+        >
+          {{ filtrosExpandidos()[tipo.id] ? 'Ver menos' : 'Ver más...' }}
+        </button>
+      }
+    </div>
+  </div>
+}

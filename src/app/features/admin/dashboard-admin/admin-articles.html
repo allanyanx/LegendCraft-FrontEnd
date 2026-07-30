@@ -1,0 +1,368 @@
+@if (!isCreating) {
+  <div class="max-w-6xl mx-auto">
+    <div class="flex justify-between items-center mb-6 pb-2 border-b border-neutral-800">
+      <div>
+        <h2 class="text-2xl font-bold text-white">Catálogo de Artículos</h2>
+        <p class="text-sm text-neutral-400">Gestiona los productos visibles en la tienda</p>
+      </div>
+      <button (click)="toggleCreate()" class="px-4 py-2 bg-[#E53935] hover:bg-[#8E0000] text-white text-sm font-bold rounded-lg transition-colors flex items-center gap-2">
+        <span>+ Nuevo Artículo</span>
+      </button>
+    </div>
+
+    <!-- Buscador -->
+    <div class="mb-6 flex gap-4">
+      <div class="relative flex-1 max-w-md">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg class="h-5 w-5 text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <input type="text" [(ngModel)]="searchTerm" (keyup.enter)="loadArticles(1)" placeholder="Buscar por nombre..." class="w-full pl-10 pr-4 py-2.5 bg-[#1A1A1A] border border-[#2B2B2B] rounded-lg text-white focus:outline-none focus:border-[#E53935] transition-colors shadow-sm">
+      </div>
+      <button (click)="loadArticles(1)" class="px-5 py-2.5 bg-[#2B2B2B] hover:bg-[#3B3B3B] text-white font-medium rounded-lg transition-colors shadow-sm">
+        Buscar
+      </button>
+    </div>
+
+    <!-- Tabla -->
+    <div class="bg-[#1A1A1A] border border-[#2B2B2B] rounded-xl overflow-hidden shadow-lg">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-[#2B2B2B] text-neutral-300 text-sm border-b border-[#3B3B3B]">
+            <th class="p-4 font-semibold w-16">Img</th>
+            <th class="p-4 font-semibold">Nombre</th>
+            <th class="p-4 font-semibold">Precio</th>
+            <th class="p-4 font-semibold">Stock</th>
+            <th class="p-4 font-semibold">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (isLoading) {
+            <tr>
+              <td colspan="5" class="p-12 text-center">
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <svg class="animate-spin h-8 w-8 text-[#E53935]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span class="text-neutral-400 font-medium">Cargando catálogo...</span>
+                </div>
+              </td>
+            </tr>
+          } @else {
+            @for (article of articles; track article.id) {
+              <tr class="border-b border-[#2B2B2B] hover:bg-[#252525] transition-colors">
+                <td class="p-4">
+                  <img [src]="getImageUrl(article.mainImageUrl)" class="w-10 h-10 object-cover rounded-md border border-[#3B3B3B]">
+                </td>
+                <td class="p-4 font-medium text-white">{{ article.name }}</td>
+                <td class="p-4 text-green-400 font-semibold">${{ article.price }}</td>
+                <td class="p-4">
+                  <span [class]="article.stock > 0 ? 'text-blue-400' : 'text-red-500'">{{ article.stock }} un.</span>
+                </td>
+                <td class="p-4 flex gap-3">
+                  <button (click)="editArticle(article.id)" class="p-2 text-neutral-400 hover:text-white bg-[#2B2B2B] hover:bg-[#3B3B3B] rounded-lg transition-colors cursor-pointer" title="Editar">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                  </button>
+                  <button (click)="deleteArticle(article.id)" class="p-2 text-neutral-400 hover:text-red-500 bg-[#2B2B2B] hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer" title="Eliminar">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="p-8 text-center text-neutral-500">No se encontraron artículos.</td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación -->
+    @if (totalPages > 1) {
+      <div class="flex justify-between items-center mt-6">
+        <button [disabled]="currentPage === 1" (click)="loadArticles(currentPage - 1)" class="px-4 py-2 bg-[#2B2B2B] text-white disabled:opacity-50 rounded-lg hover:bg-[#3B3B3B] transition-colors">Anterior</button>
+        <span class="text-neutral-400">Página {{ currentPage }} de {{ totalPages }}</span>
+        <button [disabled]="currentPage === totalPages" (click)="loadArticles(currentPage + 1)" class="px-4 py-2 bg-[#2B2B2B] text-white disabled:opacity-50 rounded-lg hover:bg-[#3B3B3B] transition-colors">Siguiente</button>
+      </div>
+    }
+  </div>
+} @else {
+  <!-- FORMULARIO CREAR -->
+  <div class="max-w-4xl mx-auto pb-10">
+    <div class="flex justify-between items-center mb-6 pb-2 border-b border-neutral-800">
+      <h2 class="text-2xl font-bold text-white">{{ isEditing ? 'Editar Artículo' : 'Crear Nuevo Artículo' }}</h2>
+      <button (click)="toggleCreate()" class="text-neutral-400 hover:text-white font-medium">Volver a la lista</button>
+    </div>
+
+    <form [formGroup]="articleForm" (ngSubmit)="onSubmit()" class="space-y-8">
+      
+      <!-- Datos Generales -->
+      <div class="bg-[#1A1A1A] border border-[#2B2B2B] p-6 rounded-xl shadow-md">
+        <h3 class="text-lg font-semibold text-[#E53935] mb-4 border-b border-[#2B2B2B] pb-2">Datos Generales</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-medium text-neutral-300">Nombre del Artículo</label>
+            <input formControlName="name" type="text" class="px-4 py-2.5 bg-[#252525] border border-[#3B3B3B] rounded-lg text-white focus:outline-none focus:border-[#E53935] transition-colors">
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-medium text-neutral-300">Precio ($)</label>
+            <input formControlName="price" type="number" step="0.01" class="px-4 py-2.5 bg-[#252525] border border-[#3B3B3B] rounded-lg text-white focus:outline-none focus:border-[#E53935] transition-colors">
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-medium text-neutral-300">Stock</label>
+            <input formControlName="stock" type="number" class="px-4 py-2.5 bg-[#252525] border border-[#3B3B3B] rounded-lg text-white focus:outline-none focus:border-[#E53935] transition-colors">
+          </div>
+          <div class="flex flex-col justify-center gap-2 mt-6">
+            <label class="flex items-center gap-3 cursor-pointer p-3 bg-[#252525] rounded-lg border border-[#3B3B3B] hover:border-[#E53935] transition-colors">
+              <input formControlName="isPrintOnDemand" type="checkbox" class="w-5 h-5 accent-[#E53935]">
+              <span class="text-neutral-300 font-medium">Es Print On Demand (Impresión 3D a demanda)</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Highlights -->
+      <div class="bg-[#1A1A1A] border border-[#2B2B2B] p-6 rounded-xl shadow-md">
+        <h3 class="text-lg font-semibold text-[#E53935] mb-4 border-b border-[#2B2B2B] pb-2">Características Destacadas (Highlights)</h3>
+        <p class="text-sm text-neutral-400 mb-4">Añade viñetas breves que resalten lo mejor del producto.</p>
+        <div formArrayName="highlights" class="space-y-3">
+          @for (control of highlights.controls; track $index) {
+            <div class="flex gap-3 items-center">
+              <span class="text-[#E53935] font-bold">•</span>
+              <input [formControlName]="$index" type="text" class="flex-1 px-4 py-2.5 bg-[#252525] border border-[#3B3B3B] rounded-lg text-white focus:outline-none focus:border-[#E53935] transition-colors" placeholder="Ej: Pintado a mano">
+              <button type="button" (click)="removeHighlight($index)" class="p-2 text-neutral-400 hover:text-red-500 bg-[#252525] hover:bg-red-500/10 border border-[#3B3B3B] hover:border-red-500/50 rounded-lg transition-colors cursor-pointer" title="Eliminar">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+              </button>
+            </div>
+          }
+        </div>
+        <button type="button" (click)="addHighlight()" class="mt-4 text-sm font-semibold text-[#E53935] hover:text-white transition-colors bg-[#E53935]/10 px-4 py-2 rounded-lg">+ Agregar característica</button>
+      </div>
+
+      <!-- Atributos -->
+      <div class="bg-[#1A1A1A] border border-[#2B2B2B] p-6 rounded-xl shadow-md">
+        <div class="flex justify-between items-center mb-4 border-b border-[#2B2B2B] pb-2">
+          <h3 class="text-lg font-semibold text-[#E53935]">Atributos Dinámicos</h3>
+          <button type="button" (click)="openTypeModal()" class="text-xs font-bold text-white bg-[#2B2B2B] hover:bg-[#3B3B3B] px-3 py-1.5 rounded-lg transition-colors">+ Nuevo Tipo</button>
+        </div>
+        <p class="text-sm text-neutral-400 mb-4">Selecciona los valores aplicables. Estos aparecerán en los filtros de la tienda para que los usuarios puedan buscar más fácilmente.</p>
+        
+        @if (isAttributesLoading) {
+          <div class="flex flex-col items-center justify-center py-6 gap-3">
+            <svg class="animate-spin h-6 w-6 text-[#E53935]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span class="text-neutral-400 text-sm">Cargando atributos...</span>
+          </div>
+        } @else if (availableAttributes.length > 0) {
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            @for (type of availableAttributes; track type.id) {
+              <div class="bg-[#252525] p-4 rounded-xl border border-[#3B3B3B] flex flex-col">
+                <div class="flex justify-between items-center mb-3">
+                  <strong class="text-white block font-semibold">{{ type.name }}</strong>
+                  <button type="button" (click)="openValueModal(type.id)" class="text-xs font-bold text-[#E53935] hover:text-white transition-colors">+ Añadir Valor</button>
+                </div>
+                <div class="flex flex-col gap-2 max-h-40 overflow-y-auto custom-scrollbar pr-2 flex-1">
+                  @for (val of type.values; track val.id) {
+                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-[#333] transition-colors">
+                      <input type="checkbox" (change)="toggleAttribute(val.id, $event)" [checked]="selectedAttributeIds.has(val.id)" class="w-4 h-4 accent-[#E53935]">
+                      <span class="text-sm text-neutral-300">{{ val.value }}</span>
+                    </label>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="text-neutral-500 italic">No hay atributos creados en la base de datos.</p>
+        }
+      </div>
+
+      <!-- Imágenes -->
+      <div class="bg-[#1A1A1A] border border-[#2B2B2B] p-6 rounded-xl shadow-md">
+        <h3 class="text-lg font-semibold text-[#E53935] mb-4 border-b border-[#2B2B2B] pb-2">Imágenes del Artículo</h3>
+        <p class="text-sm text-neutral-400 mb-6">Sube fotos de alta calidad. El sistema las optimizará y convertirá a WebP automáticamente.</p>
+        
+        <input type="file" (change)="onFileSelected($event, fileInput)" accept="image/*" class="hidden" #fileInput>
+        
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <!-- Imágenes existentes del backend (solo en edición) -->
+          @for (img of existingImages; track img.id) {
+            <div class="relative group rounded-xl overflow-hidden border border-[#3B3B3B] shadow-sm aspect-square bg-[#252525]">
+              <img [src]="getImageUrl(img.url)" class="w-full h-full object-cover">
+              
+              @if (img.isMain) {
+                <div class="absolute top-2 left-2 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded shadow-md">
+                  Principal
+                </div>
+              }
+
+              <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                @if (!img.isMain) {
+                  <button type="button" (click)="setExistingMainImage(img.id)" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer border border-white/20">
+                    ⭐ Principal
+                  </button>
+                }
+                <button type="button" (click)="deleteExistingImage(img.id)" class="bg-red-600 hover:bg-red-700 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shadow-lg cursor-pointer">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+              </div>
+            </div>
+          }
+
+          <!-- Imágenes nuevas ya listas para subir -->
+          @for (img of finalImagesUrls; track $index) {
+            <div class="relative group rounded-xl overflow-hidden border border-[#3B3B3B] shadow-sm aspect-square bg-[#252525]">
+              <img [src]="img" class="w-full h-full object-cover">
+              
+              @if ($index === 0) {
+                <div class="absolute top-2 left-2 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded shadow-md">
+                  Principal
+                </div>
+              }
+
+              <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                @if ($index !== 0) {
+                  <button type="button" (click)="setMainImage($index)" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer border border-white/20">
+                    ⭐ Principal
+                  </button>
+                }
+                <button type="button" (click)="removeImage($index)" class="bg-red-600 hover:bg-red-700 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shadow-lg cursor-pointer">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+              </div>
+            </div>
+          }
+
+          <!-- Botón de Añadir Foto simulando ser parte de la grilla -->
+          <div class="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-[#3B3B3B] rounded-xl p-4 hover:border-[#E53935] bg-[#252525]/50 hover:bg-[#252525] transition-colors cursor-pointer" (click)="fileInput.click()">
+            <span class="text-4xl text-neutral-500 mb-2">+</span>
+            <span class="text-neutral-400 font-medium text-sm text-center">Añadir Foto</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-6 mt-6 border-t border-[#2B2B2B] flex justify-end gap-4 pb-8">
+        <button type="button" (click)="toggleCreate()" class="px-6 py-3 font-semibold text-neutral-300 hover:text-white transition-colors">Descartar</button>
+        <button type="submit" [disabled]="articleForm.invalid || isSaving" class="px-8 py-3 bg-[#E53935] hover:bg-[#8E0000] disabled:bg-[#4B4B4B] disabled:text-neutral-400 text-white font-bold rounded-lg transition-all shadow-lg flex items-center gap-2">
+          @if (isSaving) {
+            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>{{ isEditing ? 'Actualizando en servidor...' : 'Creando en servidor...' }}</span>
+          } @else {
+            <span>{{ isEditing ? 'Actualizar Artículo' : 'Crear y Publicar Artículo' }}</span>
+          }
+        </button>
+      </div>
+
+    </form>
+  </div>
+}
+
+<!-- Modales Custom -->
+@if (showTypeModal) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm transition-opacity p-4">
+    <div class="bg-[#1A1A1A] border border-[#2B2B2B] rounded-xl p-6 w-full max-w-sm shadow-2xl">
+      <h3 class="text-xl font-bold text-white mb-2">Nuevo Tipo de Atributo</h3>
+      <p class="text-sm text-neutral-400 mb-6">Ej: Color, Talla, Marca, etc.</p>
+      <input type="text" [(ngModel)]="newTypeName" placeholder="Nombre del Tipo" class="w-full px-4 py-3 bg-[#252525] border border-[#3B3B3B] rounded-lg text-white focus:outline-none focus:border-[#E53935] mb-6 transition-colors">
+      <div class="flex justify-end gap-3">
+        <button type="button" (click)="closeTypeModal()" [disabled]="isSavingAttribute" class="px-4 py-2 text-neutral-400 hover:text-white font-medium transition-colors disabled:opacity-50">Cancelar</button>
+        <button type="button" (click)="saveTypeModal()" [disabled]="!newTypeName.trim() || isSavingAttribute" class="px-6 py-2 bg-[#E53935] hover:bg-[#8E0000] disabled:bg-[#4B4B4B] disabled:text-neutral-400 text-white font-bold rounded-lg transition-colors flex items-center gap-2">
+          @if (isSavingAttribute) {
+            <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Guardando...</span>
+          } @else {
+            <span>Guardar</span>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (showValueModal) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm transition-opacity p-4">
+    <div class="bg-[#1A1A1A] border border-[#2B2B2B] rounded-xl p-6 w-full max-w-sm shadow-2xl">
+      <h3 class="text-xl font-bold text-white mb-2">Añadir Nuevo Valor</h3>
+      <p class="text-sm text-neutral-400 mb-6">Ej: Rojo, XL, Logitech, etc.</p>
+      <input type="text" [(ngModel)]="newValueName" placeholder="Valor del atributo" class="w-full px-4 py-3 bg-[#252525] border border-[#3B3B3B] rounded-lg text-white focus:outline-none focus:border-[#E53935] mb-6 transition-colors">
+      <div class="flex justify-end gap-3">
+        <button type="button" (click)="closeValueModal()" [disabled]="isSavingAttribute" class="px-4 py-2 text-neutral-400 hover:text-white font-medium transition-colors disabled:opacity-50">Cancelar</button>
+        <button type="button" (click)="saveValueModal()" [disabled]="!newValueName.trim() || isSavingAttribute" class="px-6 py-2 bg-[#E53935] hover:bg-[#8E0000] disabled:bg-[#4B4B4B] disabled:text-neutral-400 text-white font-bold rounded-lg transition-colors flex items-center gap-2">
+          @if (isSavingAttribute) {
+            <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Guardando...</span>
+          } @else {
+            <span>Guardar</span>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal de Recorte (Popup) - Nivel Raíz -->
+@if (imageChangedEvent) {
+  <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+    <!-- Overlay oscuro con blur -->
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
+    
+    <!-- Contenedor principal del modal -->
+    <div class="relative bg-[#1A1A1A] border border-[#2B2B2B] rounded-2xl w-full max-w-4xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh]">
+      
+      <!-- Header Modal -->
+      <div class="flex justify-between items-center p-5 border-b border-[#2B2B2B] bg-[#1A1A1A]">
+        <h3 class="text-xl font-bold text-white flex items-center gap-2">✂️ Editar Imagen</h3>
+        <button type="button" (click)="cancelCrop()" [disabled]="isProcessingImage" class="text-neutral-400 hover:text-white transition-colors cursor-pointer bg-[#2B2B2B] hover:bg-[#3B3B3B] p-2 rounded-lg">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      
+      <!-- Contenedor del Cropper -->
+      <div class="relative bg-black w-full flex-1 flex justify-center items-center overflow-hidden min-h-[400px] max-h-[60vh] p-2">
+        <image-cropper 
+          [imageChangedEvent]="imageChangedEvent" 
+          [maintainAspectRatio]="true" 
+          [aspectRatio]="1 / 1"
+          format="webp" 
+          (imageCropped)="imageCropped($event)">
+        </image-cropper>
+      </div>
+
+      <!-- Footer Modal -->
+      <div class="p-5 border-t border-[#2B2B2B] flex flex-wrap gap-4 justify-end bg-[#1A1A1A]">
+        <button type="button" (click)="cancelCrop()" [disabled]="isProcessingImage" class="px-5 py-2.5 bg-transparent border border-[#4B4B4B] text-neutral-300 hover:text-white rounded-xl transition-colors font-medium disabled:opacity-50 cursor-pointer">
+          Cancelar
+        </button>
+        <button type="button" (click)="skipCrop()" [disabled]="isProcessingImage" class="px-5 py-2.5 bg-[#2B2B2B] hover:bg-[#3B3B3B] text-white font-medium rounded-xl transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2 cursor-pointer">
+          <span>Omitir Recorte</span>
+        </button>
+        <button type="button" (click)="saveCroppedImage()" [disabled]="isProcessingImage" class="px-6 py-2.5 bg-[#E53935] hover:bg-[#8E0000] text-white font-bold rounded-xl transition-colors shadow-lg flex items-center gap-2 disabled:opacity-50 cursor-pointer">
+          @if (isProcessingImage) {
+            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Procesando...</span>
+          } @else {
+            <span>Recortar y Guardar</span>
+          }
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

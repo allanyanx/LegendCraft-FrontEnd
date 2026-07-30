@@ -1,0 +1,100 @@
+<div class="min-h-[80vh] flex items-center justify-center px-4 py-12 text-[#F5F5F5]">
+  <div class="w-full max-w-md bg-[#1A1A1A] border border-[#2B2B2B] rounded-2xl p-8 shadow-2xl">
+    <div class="text-center mb-8">
+      <h2 class="text-3xl font-bold text-white mb-2">Únete a <span class="text-[#E53935]">LegendCraft</span></h2>
+      <p class="text-[#9E9E9E]">Crea tu cuenta para compras más rápidas.</p>
+    </div>
+
+    @if (error()) {
+      <div class="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-md mb-6 text-sm">
+        {{ error() }}
+      </div>
+    }
+
+    <form (ngSubmit)="onSubmit()" class="space-y-5">
+      <div class="flex gap-4">
+        <div class="flex-1">
+          <label class="block text-sm font-medium text-neutral-300 mb-2">Nombre</label>
+          <input
+            type="text"
+            name="firstName"
+            [ngModel]="firstName()"
+            (ngModelChange)="firstName.set($event)"
+            class="w-full bg-[#2B2B2B] border border-neutral-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#E53935] transition-colors"
+            placeholder="Link"
+            required
+          />
+        </div>
+        <div class="flex-1">
+          <label class="block text-sm font-medium text-neutral-300 mb-2">Apellido</label>
+          <input
+            type="text"
+            name="lastName"
+            [ngModel]="lastName()"
+            (ngModelChange)="lastName.set($event)"
+            class="w-full bg-[#2B2B2B] border border-neutral-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#E53935] transition-colors"
+            placeholder="Hero"
+            required
+          />
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-neutral-300 mb-2">Correo Electrónico</label>
+        <input
+          type="email"
+          name="email"
+          [ngModel]="email()"
+          (ngModelChange)="email.set($event)"
+          class="w-full bg-[#2B2B2B] border border-neutral-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#E53935] transition-colors"
+          placeholder="tu@correo.com"
+          required
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-neutral-300 mb-2">Contraseña</label>
+        <input
+          type="password"
+          name="password"
+          [ngModel]="password()"
+          (ngModelChange)="password.set($event)"
+          class="w-full bg-[#2B2B2B] border border-neutral-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#E53935] transition-colors"
+          placeholder="••••••••"
+          required
+        />
+        <p class="text-xs text-neutral-500 mt-1">Debe tener al menos 6 caracteres, 1 mayúscula, 1 número y 1 símbolo especial.</p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-neutral-300 mb-2">Confirmar Contraseña</label>
+        <input
+          type="password"
+          name="confirmPassword"
+          [ngModel]="confirmPassword()"
+          (ngModelChange)="confirmPassword.set($event)"
+          class="w-full bg-[#2B2B2B] border border-neutral-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#E53935] transition-colors"
+          placeholder="••••••••"
+          required
+        />
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="isLoading()"
+        class="w-full bg-[#E53935] hover:bg-[#C62828] disabled:bg-neutral-600 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg transition-colors mt-2"
+      >
+        @if (isLoading()) {
+          <span class="opacity-80">Registrando...</span>
+        } @else {
+          Crear Cuenta
+        }
+      </button>
+    </form>
+
+    <div class="mt-8 text-center text-sm text-[#9E9E9E]">
+      ¿Ya tienes una cuenta? 
+      <a routerLink="/auth/login" class="text-white hover:text-[#E53935] font-semibold transition-colors">Inicia sesión</a>
+    </div>
+  </div>
+</div>

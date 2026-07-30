@@ -1,3 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+/* Asegurar que todos los botones y enlaces tengan el cursor pointer (dedito) */
+button, 
+a, 
+input[type="button"], 
+input[type="submit"], 
+input[type="reset"],
+[role="button"],
+[routerLink],
+select {
+  cursor: pointer;
+}
