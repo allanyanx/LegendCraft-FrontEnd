@@ -5,12 +5,12 @@
   <!-- Imagen del Producto -->
   <div class="relative w-full overflow-hidden aspect-4/5 bg-[#2B2B2B]">
     <img
-      [src]="articulo().urlImagen"
-      [alt]="articulo().nombre"
+      [src]="articulo().mainImageUrl"
+      [alt]="articulo().name"
       class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
     />
-    <!-- Etiqueta de Agotado (Solo si el stock es 0) -->
-    @if (articulo().stock === 0) {
+    <!-- Etiqueta de Agotado (Solo si el stock es 0 y no es PrintOnDemand) -->
+    @if (articulo().stock === 0 && !articulo().isPrintOnDemand) {
       <span
         class="absolute px-2 py-1 text-xs font-bold rounded top-2 right-2 bg-black/80 text-[#E53935]"
       >
@@ -21,18 +21,18 @@
 
   <!-- Detalles del Producto -->
   <div class="flex flex-col flex-1 p-4">
-    <h3 class="mb-2 text-lg font-semibold line-clamp-2 text-[#F5F5F5]" [title]="articulo().nombre">
-      {{ articulo().nombre }}
+    <h3 class="mb-2 text-lg font-semibold line-clamp-2 text-[#F5F5F5]" [title]="articulo().name">
+      {{ articulo().name }}
     </h3>
 
     <div class="flex items-center justify-between mt-auto">
       <span class="text-xl font-bold text-[#E53935]"
-        >${{ articulo().precio | number: '1.2-2' }}</span
+        >${{ articulo().price | number: '1.2-2' }}</span
       >
 
       <!-- Botón Agregar al Carrito -->
       <button
-        [disabled]="articulo().stock === 0"
+        [disabled]="articulo().stock === 0 && !articulo().isPrintOnDemand"
         class="p-2 text-white transition-colors rounded-md bg-[#2B2B2B] hover:bg-[#E53935] disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <svg

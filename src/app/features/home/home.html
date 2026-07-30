@@ -1,0 +1,97 @@
+<!-- 1. CARRUSEL / BANNER PRINCIPAL -->
+<section class="px-4 py-6 mx-auto max-w-7xl">
+  <div
+    class="bg-[#1A1A1A] text-white rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8 min-h-[350px] relative border border-neutral-800"
+  >
+    <div
+      class="flex items-center justify-center w-full overflow-hidden border md:w-1/3 bg-neutral-800 rounded-xl aspect-[3/4] max-w-[280px] border-neutral-700"
+    >
+      <img 
+        [src]="diapositivas[slideActual()].imageUrl" 
+        [alt]="diapositivas[slideActual()].title"
+        class="object-cover w-full h-full transition-opacity duration-500"
+      />
+    </div>
+
+    <div class="flex flex-col justify-between flex-1 h-full py-4 text-center md:text-left">
+      <div class="min-h-[120px]">
+        <h2 class="text-3xl font-bold mb-4 tracking-wide text-[#E53935]">
+          {{ diapositivas[slideActual()].title }}
+        </h2>
+        <p class="max-w-md text-neutral-300">
+          {{ diapositivas[slideActual()].description }}
+        </p>
+      </div>
+
+      <div class="flex justify-center gap-2 mt-6 md:justify-start">
+        @for (diapo of diapositivas; track $index) {
+          <span 
+            (click)="setSlide($index)"
+            class="h-2 rounded-full cursor-pointer transition-all duration-300"
+            [class]="slideActual() === $index ? 'bg-[#E53935] w-6' : 'bg-neutral-600 hover:bg-neutral-400 w-2'"
+          ></span>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. SECCIÓN DE PRODUCTOS -->
+<section class="px-4 py-8 mx-auto max-w-7xl">
+  <h3 class="mb-6 text-2xl font-bold tracking-wide text-center text-white">Nuevos Lanzamientos</h3>
+
+  <div class="flex flex-wrap justify-center gap-3 mb-8">
+    <button
+      (click)="cambiarCategoria('Nuevos')"
+      [class]="categoriaActiva() === 'Nuevos' ? 'px-5 py-2 bg-[#E53935] text-white font-semibold rounded-full text-sm transition' : 'px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-white'"
+    >
+      Nuevos
+    </button>
+    <button
+      (click)="cambiarCategoria('Animado')"
+      [class]="categoriaActiva() === 'Animado' ? 'px-5 py-2 bg-[#E53935] text-white font-semibold rounded-full text-sm transition' : 'px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-white'"
+    >
+      Animados
+    </button>
+    <button
+      (click)="cambiarCategoria('Oferta')"
+      [class]="categoriaActiva() === 'Oferta' ? 'px-5 py-2 bg-[#E53935] text-white font-semibold rounded-full text-sm transition' : 'px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-white'"
+    >
+      Ofertas
+    </button>
+    <button
+      (click)="cambiarCategoria('Preventa')"
+      [class]="categoriaActiva() === 'Preventa' ? 'px-5 py-2 bg-[#E53935] text-white font-semibold rounded-full text-sm transition' : 'px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-white'"
+    >
+      Preventa
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    @if (isLoading()) {
+      <app-product-skeleton></app-product-skeleton>
+      <app-product-skeleton></app-product-skeleton>
+      <app-product-skeleton></app-product-skeleton>
+      <app-product-skeleton></app-product-skeleton>
+    } @else {
+      @for (item of articulosRecientes(); track item.id) {
+        <app-product-card [articulo]="item"></app-product-card>
+      } @empty {
+        <div class="col-span-full text-center py-10 text-[#9E9E9E]">
+          No hay productos disponibles por el momento.
+        </div>
+      }
+    }
+  </div>
+</section>
+
+<!-- 3. PREGUNTAS FRECUENTES -->
+<section class="px-4 py-12 mx-auto max-w-4xl">
+  <h3 class="mb-8 text-2xl font-bold tracking-wide text-center text-white">Preguntas Frecuentes</h3>
+
+  <div class="space-y-2">
+    @for (faq of faqs; track $index) {
+      <app-faq-item [question]="faq.q" [answer]="faq.a"></app-faq-item>
+    }
+  </div>
+</section>

@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ArticuloService } from '../../core/services/articulo.service';
-import { Articulo } from '../../core/models/articulo';
+import { ArticuloDetalle } from '../../core/models/articulo-detalle';
 
 @Component({
   selector: 'app-product-detail',
@@ -14,13 +14,13 @@ export class ProductDetail implements OnInit {
   private articuloService = inject(ArticuloService);
 
   // Estados Reactivos
-  articulo = signal<Articulo | null>(null);
+  articulo = signal<ArticuloDetalle | null>(null);
   isLoading = signal<boolean>(true);
   cantidad = signal<number>(1);
 
   // Convertimos el objeto JSONB de atributos en un arreglo para iterarlo fácilmente en el HTML
   listaAtributos = computed(() => {
-    const data = this.articulo()?.atributos;
+    const data = this.articulo()?.attributes;
     if (!data) return [];
     return Object.entries(data); // Convierte { franquicia: 'Halo' } en [['franquicia', 'Halo']]
   });
@@ -52,7 +52,8 @@ export class ProductDetail implements OnInit {
 
   cambiarCantidad(delta: number) {
     const nuevaCantidad = this.cantidad() + delta;
-    const stockMaximo = this.articulo()?.stock || 1;
+    const isPoD = this.articulo()?.isPrintOnDemand;
+    const stockMaximo = isPoD ? 99 : (this.articulo()?.stock || 1);
 
     // Evitamos que baje de 1 o suba más allá del stock disponible
     if (nuevaCantidad >= 1 && nuevaCantidad <= stockMaximo) {

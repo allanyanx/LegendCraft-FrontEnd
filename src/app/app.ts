@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, signal, inject } from '@angular/core';
+import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { Header } from './shared/components/header/header';
 import { Footer } from './shared/components/footer/footer';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -11,4 +12,14 @@ import { Footer } from './shared/components/footer/footer';
 })
 export class App {
   protected readonly title = signal('LegendCraft-FrontEnd');
+  private router = inject(Router);
+  isAdminRoute = signal(false);
+
+  constructor() {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      this.isAdminRoute.set(event.urlAfterRedirects.includes('/dashboard-admin'));
+    });
+  }
 }

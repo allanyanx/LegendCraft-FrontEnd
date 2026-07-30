@@ -1,5 +1,9 @@
-<app-header></app-header>
-<main class="min-h-screen bg-[#141414]">
+@if (!isAdminRoute()) {
+  <app-header></app-header>
+}
+<main [class]="isAdminRoute() ? 'h-screen' : 'min-h-screen bg-[#141414]'">
   <router-outlet> </router-outlet>
 </main>
-<app-footer></app-footer>
+@if (!isAdminRoute()) {
+  <app-footer></app-footer>
+}

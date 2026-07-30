@@ -1,0 +1,68 @@
+<div class="flex h-screen bg-[#0f0f0f] text-white overflow-hidden">
+  <!-- SIDEBAR -->
+  <aside class="w-64 flex flex-col bg-[#1A1A1A] border-r border-[#2B2B2B]">
+    <div class="p-6 border-b border-[#2B2B2B]">
+      <h1 class="text-2xl font-black italic text-[#E53935] tracking-wider uppercase">LegendCraft</h1>
+      <p class="text-xs text-neutral-500 mt-1 font-medium tracking-widest">Admin Dashboard</p>
+    </div>
+    
+    <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+      <a routerLink="/shop" class="w-full flex items-center justify-center gap-2 px-4 py-3 mb-6 text-sm font-bold text-[#E53935] border border-[#E53935]/30 rounded-lg hover:bg-[#E53935]/10 transition-all">
+        ⬅ Volver a la Tienda
+      </a>
+      <button (click)="setTab('articles')" [class.bg-red-950]="activeTab === 'articles'" [class.text-[#E53935]]="activeTab === 'articles'" [class.border-[#E53935]]="activeTab === 'articles'" class="w-full flex items-center gap-3 px-4 py-3 text-left text-sm font-medium text-neutral-400 border border-transparent rounded-lg hover:bg-[#2B2B2B] transition-all">
+        📦 Artículos
+      </button>
+      <button (click)="setTab('orders')" [class.bg-red-950]="activeTab === 'orders'" [class.text-[#E53935]]="activeTab === 'orders'" [class.border-[#E53935]]="activeTab === 'orders'" class="w-full flex items-center gap-3 px-4 py-3 text-left text-sm font-medium text-neutral-400 border border-transparent rounded-lg hover:bg-[#2B2B2B] transition-all">
+        🛒 Órdenes
+      </button>
+      <button (click)="setTab('users')" [class.bg-red-950]="activeTab === 'users'" [class.text-[#E53935]]="activeTab === 'users'" [class.border-[#E53935]]="activeTab === 'users'" class="w-full flex items-center gap-3 px-4 py-3 text-left text-sm font-medium text-neutral-400 border border-transparent rounded-lg hover:bg-[#2B2B2B] transition-all">
+        👥 Usuarios
+      </button>
+      <button (click)="setTab('profile')" [class.bg-red-950]="activeTab === 'profile'" [class.text-[#E53935]]="activeTab === 'profile'" [class.border-[#E53935]]="activeTab === 'profile'" class="w-full flex items-center gap-3 px-4 py-3 text-left text-sm font-medium text-neutral-400 border border-transparent rounded-lg hover:bg-[#2B2B2B] transition-all">
+        ⚙️ Mi Perfil
+      </button>
+    </nav>
+
+    <div class="p-4 border-t border-[#2B2B2B]">
+      <button (click)="logout()" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#E53935] hover:bg-[#8E0000] text-white text-sm font-bold rounded-lg transition-colors">
+        Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+    <!-- TOP HEADER -->
+    <header class="h-16 bg-[#1A1A1A]/80 backdrop-blur-sm border-b border-[#2B2B2B] flex items-center justify-between px-8 z-10">
+      <h2 class="text-lg font-bold text-neutral-200 capitalize">
+        @if (activeTab === 'articles') { Gestión de Artículos }
+        @else if (activeTab === 'orders') { Historial de Órdenes }
+        @else if (activeTab === 'users') { Usuarios Registrados }
+        @else if (activeTab === 'profile') { Configuración de Cuenta }
+      </h2>
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-[#E53935] flex items-center justify-center text-sm font-bold text-white">
+          {{ authService.currentUser()?.firstName?.charAt(0) || 'A' }}
+        </div>
+        <span class="text-sm font-medium text-neutral-300">{{ authService.currentUser()?.firstName || 'Admin' }}</span>
+      </div>
+    </header>
+
+    <!-- CONTENT AREA -->
+    <div class="flex-1 overflow-y-auto p-8 custom-scrollbar relative z-0">
+      @if (activeTab === 'articles') {
+        <app-admin-articles></app-admin-articles>
+      }
+      @if (activeTab === 'orders') {
+        <app-admin-orders></app-admin-orders>
+      }
+      @if (activeTab === 'users') {
+        <app-admin-users></app-admin-users>
+      }
+      @if (activeTab === 'profile') {
+        <app-admin-profile></app-admin-profile>
+      }
+    </div>
+  </main>
+</div>
