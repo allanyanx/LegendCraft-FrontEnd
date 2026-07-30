@@ -1,11 +1,14 @@
-import { Component, inject, ChangeDetectorRef, PLATFORM_ID, afterNextRender } from '@angular/core';
+import { Component, inject, ChangeDetectorRef, PLATFORM_ID, OnInit } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators, FormsModule } from '@angular/forms';
-import { finalize } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject } from 'rxjs';
+import { finalize, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ArticleService } from '../../../core/services/article.service';
 import { AttributeService } from '../../../core/services/attribute.service';
 import { ArticleListResponse } from '../../../core/models/article';
 import { AttributeTypeResponse } from '../../../core/models/attribute';
+import { ToastService } from '../../../core/services/toast.service';
 import { ImageCropperComponent, ImageCroppedEvent } from 'ngx-image-cropper';
 import imageCompression from 'browser-image-compression';
 import { environment } from '../../../../environments/environment';
@@ -16,18 +19,20 @@ import { environment } from '../../../../environments/environment';
   imports: [CommonModule, ReactiveFormsModule, FormsModule, ImageCropperComponent],
   templateUrl: './admin-articles.html'
 })
-export class AdminArticlesComponent {
+export class AdminArticlesComponent implements OnInit {
   private articleService = inject(ArticleService);
   private attributeService = inject(AttributeService);
   private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   private platformId = inject(PLATFORM_ID);
+  private toastService = inject(ToastService);
 
   // Lista
   articles: ArticleListResponse[] = [];
   currentPage = 1;
   totalPages = 1;
   searchTerm = '';
+  searchSubject = new Subject<string>();
   
   // Estado
   isCreating = false;
@@ -37,10 +42,14 @@ export class AdminArticlesComponent {
   isLoading = true; // Inicia en true para mostrar spinner durante SSR
   isAttributesLoading = true;
 
-  // Formulario
+  // Formulario & Filtros
   articleForm: FormGroup;
   availableAttributes: AttributeTypeResponse[] = [];
-  selectedAttributeIds: Set<number> = new Set();
+  selectedAttributeIds: Set<number> = new Set(); // Para crear/editar
+  
+  // Filtros de tabla
+  showFilterMenu = false;
+  activeFilterIds: Set<number> = new Set();
 
   // Imágenes
   imageChangedEvent: any = '';
@@ -54,20 +63,31 @@ export class AdminArticlesComponent {
   constructor() {
     this.articleForm = this.fb.group({
       name: ['', Validators.required],
+      description: ['', Validators.required],
       price: [0, [Validators.required, Validators.min(0.01)]],
       stock: [0, [Validators.required, Validators.min(0)]],
       isPrintOnDemand: [true],
-      printTimeDays: [3],
-      highlights: this.fb.array([this.fb.control('')])
+      printTimeDays: [3, [Validators.required, Validators.min(0)]],
+      highlights: this.fb.array([this.fb.control('', Validators.required)], Validators.required)
     });
 
-    // afterNextRender garantiza que el código se ejecute SOLO en el navegador (cliente)
-    // y DESPUÉS de que Angular termine de hidratar la página. 
-    // Esto previene los errores de "Hydration Mismatch" que congelan la vista.
-    afterNextRender(() => {
+    // Configuración del buscador reactivo (Debounce)
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+      takeUntilDestroyed()
+    ).subscribe(term => {
+      this.searchTerm = term;
+      this.loadArticles(1);
+    });
+
+  }
+
+  ngOnInit() {
+    if (isPlatformBrowser(this.platformId)) {
       this.loadArticles(1);
       this.loadAttributes();
-    });
+    }
   }
 
   get highlights() {
@@ -75,26 +95,50 @@ export class AdminArticlesComponent {
   }
 
   addHighlight() {
-    this.highlights.push(this.fb.control(''));
+    this.highlights.push(this.fb.control('', Validators.required));
   }
 
   removeHighlight(index: number) {
     this.highlights.removeAt(index);
+    if (this.highlights.length === 0) {
+      this.addHighlight(); // Asegurarse de que siempre haya al menos uno
+    }
+  }
+
+  toggleFilterMenu() {
+    this.showFilterMenu = !this.showFilterMenu;
+  }
+
+  toggleTableFilter(id: number, event: any) {
+    if (event.target.checked) {
+      this.activeFilterIds.add(id);
+    } else {
+      this.activeFilterIds.delete(id);
+    }
+    this.loadArticles(1);
   }
 
   loadArticles(page: number) {
     this.isLoading = true;
-    this.articleService.getArticles(page, 10, this.searchTerm).subscribe({
+    
+    // Extraer los IDs del Set como array
+    const attributeValues = Array.from(this.activeFilterIds);
+
+    this.articleService.getArticles(page, 10, this.searchTerm, attributeValues).subscribe({
       next: (res) => {
-        this.articles = res.items;
-        this.currentPage = res.currentPage;
-        this.totalPages = res.totalPages;
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.articles = res.items;
+          this.currentPage = res.currentPage;
+          this.totalPages = res.totalPages;
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        });
       },
       error: () => {
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        });
       }
     });
   }
@@ -110,13 +154,17 @@ export class AdminArticlesComponent {
     this.isAttributesLoading = true;
     this.attributeService.getAllAttributes().subscribe({
       next: (res) => {
-        this.availableAttributes = res ? [...res] : [];
-        this.isAttributesLoading = false;
-        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.availableAttributes = res ? [...res] : [];
+          this.isAttributesLoading = false;
+          this.cdr.markForCheck();
+        });
       },
       error: () => {
-        this.isAttributesLoading = false;
-        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.isAttributesLoading = false;
+          this.cdr.markForCheck();
+        });
       }
     });
   }
@@ -176,7 +224,7 @@ export class AdminArticlesComponent {
         },
         error: (err) => {
           console.error('Error al guardar el tipo', err);
-          alert('Error al crear el tipo de atributo. Verifica tu conexión.');
+          this.toastService.error('Error al crear el tipo de atributo. Verifica tu conexión.');
         }
       });
     }
@@ -214,7 +262,7 @@ export class AdminArticlesComponent {
         },
         error: (err) => {
           console.error('Error al guardar el valor', err);
-          alert('Error al crear el valor. Verifica tu conexión.');
+          this.toastService.error('Error al crear el valor. Verifica tu conexión.');
         }
       });
     }
@@ -250,7 +298,7 @@ export class AdminArticlesComponent {
       await this.optimizeAndAddFile(file);
     } catch (error) {
       console.error('Error comprimiendo imagen recortada', error);
-      alert('Error comprimiendo imagen. Intenta con otra.');
+      this.toastService.error('Error comprimiendo imagen. Intenta con otra.');
     } finally {
       this.isProcessingImage = false;
       this.cancelCrop();
@@ -267,7 +315,7 @@ export class AdminArticlesComponent {
       await this.optimizeAndAddFile(this.rawSelectedFile);
     } catch (error) {
       console.error('Error comprimiendo imagen original', error);
-      alert('Error comprimiendo imagen original. Intenta con otra.');
+      this.toastService.error('Error comprimiendo imagen original. Intenta con otra.');
     } finally {
       this.isProcessingImage = false;
       this.cancelCrop();
@@ -322,6 +370,7 @@ export class AdminArticlesComponent {
 
   resetForm() {
     this.articleForm.reset({
+      description: '',
       price: 0,
       stock: 0,
       isPrintOnDemand: true,
@@ -346,6 +395,7 @@ export class AdminArticlesComponent {
         
         this.articleForm.patchValue({
           name: article.name,
+          description: article.description,
           price: article.price,
           stock: article.stock,
           isPrintOnDemand: article.isPrintOnDemand,
@@ -354,7 +404,7 @@ export class AdminArticlesComponent {
         
         this.highlights.clear();
         if (article.highlights && article.highlights.length > 0) {
-          article.highlights.forEach((h: string) => this.highlights.push(this.fb.control(h)));
+          article.highlights.forEach((h: string) => this.highlights.push(this.fb.control(h, Validators.required)));
         } else {
           this.addHighlight();
         }
@@ -381,7 +431,7 @@ export class AdminArticlesComponent {
         this.cdr.detectChanges();
       },
       error: () => {
-        alert('Error al cargar el artículo.');
+        this.toastService.error('Error al cargar los detalles del artículo.');
         this.isLoading = false;
         this.cdr.detectChanges();
       }
@@ -392,10 +442,11 @@ export class AdminArticlesComponent {
     if (confirm('¿Estás seguro de que deseas eliminar este artículo?')) {
       this.articleService.deleteArticle(id).subscribe({
         next: () => {
+          this.toastService.success('Artículo eliminado correctamente.');
           this.loadArticles(1);
         },
         error: () => {
-          alert('Error al eliminar el artículo.');
+          this.toastService.error('Error al eliminar el artículo.');
         }
       });
     }
@@ -407,9 +458,10 @@ export class AdminArticlesComponent {
       this.articleService.deleteImage(this.editingArticleId, imageId).subscribe({
         next: () => {
           this.existingImages = this.existingImages.filter(img => img.id !== imageId);
+          this.toastService.success('Imagen eliminada.');
           this.cdr.detectChanges();
         },
-        error: () => alert('Error al eliminar imagen.')
+        error: () => this.toastService.error('Error al eliminar la imagen.')
       });
     }
   }
@@ -419,14 +471,23 @@ export class AdminArticlesComponent {
     this.articleService.setMainImage(this.editingArticleId, imageId).subscribe({
       next: () => {
         this.existingImages.forEach(img => img.isMain = img.id === imageId);
+        this.toastService.success('Imagen principal actualizada.');
         this.cdr.detectChanges();
       },
-      error: () => alert('Error al establecer imagen principal.')
+      error: () => this.toastService.error('Error al establecer la imagen principal.')
     });
   }
 
   onSubmit() {
-    if (this.articleForm.invalid) return;
+    if (this.articleForm.invalid) {
+      this.toastService.error('Por favor, completa todos los campos obligatorios.');
+      return;
+    }
+    
+    if (this.existingImages.length === 0 && this.finalImages.length === 0) {
+      this.toastService.error('Debes agregar al menos una imagen del producto.');
+      return;
+    }
 
     this.isSaving = true;
     const formValue = this.articleForm.value;
@@ -436,6 +497,7 @@ export class AdminArticlesComponent {
 
     const request = {
       name: formValue.name,
+      description: formValue.description,
       price: formValue.price,
       stock: formValue.stock,
       isPrintOnDemand: formValue.isPrintOnDemand,
@@ -449,18 +511,22 @@ export class AdminArticlesComponent {
         next: () => {
           if (this.finalImages.length > 0) {
             this.articleService.uploadArticleImages(this.editingArticleId!, this.finalImages).subscribe({
-              next: () => this.finalizeCreation(),
+              next: () => {
+                this.toastService.success('Artículo actualizado con éxito.');
+                this.finalizeCreation();
+              },
               error: () => {
-                alert('Artículo actualizado, pero falló la subida de nuevas imágenes.');
+                this.toastService.error('Artículo actualizado, pero falló la subida de imágenes nuevas.');
                 this.finalizeCreation();
               }
             });
           } else {
+            this.toastService.success('Artículo actualizado con éxito.');
             this.finalizeCreation();
           }
         },
         error: () => {
-          alert('Error al actualizar el artículo.');
+          this.toastService.error('Error al actualizar el artículo.');
           this.isSaving = false;
         }
       });
@@ -473,18 +539,22 @@ export class AdminArticlesComponent {
           // Si hay imágenes, subirlas
           if (this.finalImages.length > 0 && articleId) {
             this.articleService.uploadArticleImages(articleId, this.finalImages).subscribe({
-              next: () => this.finalizeCreation(),
+              next: () => {
+                this.toastService.success('Artículo creado y publicado con éxito.');
+                this.finalizeCreation();
+              },
               error: () => {
-                alert('Artículo creado, pero falló la subida de imágenes. Tendrás que subirlas luego.');
+                this.toastService.error('Artículo creado, pero falló la subida de imágenes.');
                 this.finalizeCreation();
               }
             });
           } else {
+            this.toastService.success('Artículo creado con éxito.');
             this.finalizeCreation();
           }
         },
         error: (err) => {
-          alert('Error al crear el artículo. Verifica la conexión.');
+          this.toastService.error('Error al crear el artículo. Verifica tu conexión.');
           this.isSaving = false;
         }
       });
