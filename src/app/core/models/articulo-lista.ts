@@ -4,6 +4,7 @@ export interface ArticuloLista {
   price: number;
   stock: number;
   isPrintOnDemand: boolean;
+  requiresQuote: boolean;
   printTimeDays: number;
   mainImageUrl: string;
 }

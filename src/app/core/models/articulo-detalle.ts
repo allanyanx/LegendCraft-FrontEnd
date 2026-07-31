@@ -6,6 +6,7 @@ export interface ArticuloDetalle {
   price: number;
   stock: number;
   isPrintOnDemand: boolean;
+  requiresQuote: boolean;
   printTimeDays: number;
   highlights: string[];
   attributes: Record<string, string>;

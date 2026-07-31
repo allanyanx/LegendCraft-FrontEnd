@@ -67,6 +67,7 @@ export class AdminArticlesComponent implements OnInit {
       price: [0, [Validators.required, Validators.min(0.01)]],
       stock: [0, [Validators.required, Validators.min(0)]],
       isPrintOnDemand: [true],
+      requiresQuote: [false],
       printTimeDays: [3, [Validators.required, Validators.min(0)]],
       highlights: this.fb.array([this.fb.control('', Validators.required)], Validators.required)
     });
@@ -374,6 +375,7 @@ export class AdminArticlesComponent implements OnInit {
       price: 0,
       stock: 0,
       isPrintOnDemand: true,
+      requiresQuote: false,
       printTimeDays: 3
     });
     this.highlights.clear();
@@ -399,6 +401,7 @@ export class AdminArticlesComponent implements OnInit {
           price: article.price,
           stock: article.stock,
           isPrintOnDemand: article.isPrintOnDemand,
+          requiresQuote: article.requiresQuote,
           printTimeDays: article.printTimeDays
         });
         
@@ -501,6 +504,7 @@ export class AdminArticlesComponent implements OnInit {
       price: formValue.price,
       stock: formValue.stock,
       isPrintOnDemand: formValue.isPrintOnDemand,
+      requiresQuote: formValue.requiresQuote,
       printTimeDays: formValue.printTimeDays,
       highlights: cleanHighlights,
       attributeValueIds: Array.from(this.selectedAttributeIds)

@@ -60,4 +60,19 @@ export class ProductDetail implements OnInit {
       this.cantidad.set(nuevaCantidad);
     }
   }
+
+  cotizarPorWhatsApp(prod: ArticuloDetalle) {
+    const numeroTelefono = '521234567890';
+    let mensaje = '';
+    
+    if (prod.requiresQuote) {
+      mensaje = `Hola, me gustaría cotizar la impresión 3D de la figura "${prod.name}". ¿Me podrían dar precios y tiempos de entrega? (Enlace: ${window.location.href})`;
+    } else {
+      mensaje = `Hola, me interesa comprar el artículo "${prod.name}" (Cantidad: ${this.cantidad()}) que cuesta $${prod.price}. ¿Tienen disponibilidad? (Enlace: ${window.location.href})`;
+    }
+
+    const mensajeCodificado = encodeURIComponent(mensaje);
+    const url = `https://wa.me/${numeroTelefono}?text=${mensajeCodificado}`;
+    window.open(url, '_blank');
+  }
 }
