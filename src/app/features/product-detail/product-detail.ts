@@ -1,22 +1,33 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ArticuloService } from '../../core/services/articulo.service';
 import { ArticuloDetalle } from '../../core/models/articulo-detalle';
+import { CartService } from '../../core/services/cart.service';
+import { ToastService } from '../../core/services/toast.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './product-detail.html',
 })
 export class ProductDetail implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private articuloService = inject(ArticuloService);
+  private cartService = inject(CartService);
+  private toastService = inject(ToastService);
 
   // Estados Reactivos
   articulo = signal<ArticuloDetalle | null>(null);
   isLoading = signal<boolean>(true);
   cantidad = signal<number>(1);
+  selectedImage = signal<string>('');
+  
+  zoomTransform = signal<string>('scale(1)');
+  zoomOrigin = signal<string>('center center');
 
   // Convertimos el objeto JSONB de atributos en un arreglo para iterarlo fácilmente en el HTML
   listaAtributos = computed(() => {
@@ -41,6 +52,10 @@ export class ProductDetail implements OnInit {
     this.articuloService.getArticuloById(id).subscribe({
       next: (data) => {
         this.articulo.set(data);
+        if (data.images && data.images.length > 0) {
+          const mainImg = data.images.find(i => i.isMain) || data.images[0];
+          this.selectedImage.set(this.getImageUrl(mainImg.imageUrl));
+        }
         this.isLoading.set(false);
       },
       error: () => {
@@ -61,6 +76,21 @@ export class ProductDetail implements OnInit {
     }
   }
 
+  onMouseMove(event: MouseEvent) {
+    const el = event.currentTarget as HTMLElement;
+    const rect = el.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+
+    this.zoomOrigin.set(`${x}% ${y}%`);
+    this.zoomTransform.set('scale(2)');
+  }
+
+  onMouseLeave() {
+    this.zoomTransform.set('scale(1)');
+    this.zoomOrigin.set('center center');
+  }
+
   cotizarPorWhatsApp(prod: ArticuloDetalle) {
     const numeroTelefono = '521234567890';
     let mensaje = '';
@@ -74,5 +104,22 @@ export class ProductDetail implements OnInit {
     const mensajeCodificado = encodeURIComponent(mensaje);
     const url = `https://wa.me/${numeroTelefono}?text=${mensajeCodificado}`;
     window.open(url, '_blank');
+  }
+
+  agregarAlCarrito(prod: ArticuloDetalle) {
+    this.cartService.addItem(prod.id, this.cantidad()).subscribe({
+      next: () => {
+        this.toastService.success('Producto agregado al carrito con éxito');
+      },
+      error: () => {
+        this.toastService.error('Debes iniciar sesión para agregar productos al carrito');
+        this.router.navigate(['/auth/login']);
+      }
+    });
+  }
+
+  getImageUrl(url: string): string {
+    if (!url) return '';
+    return url.startsWith('/') ? environment.apiUrl.replace('/api', '') + url : url;
   }
 }

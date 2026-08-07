@@ -3,6 +3,7 @@ import { ArticuloImagen } from './articulo-imagen';
 export interface ArticuloDetalle {
   id: number;
   name: string;
+  description: string;
   price: number;
   stock: number;
   isPrintOnDemand: boolean;
