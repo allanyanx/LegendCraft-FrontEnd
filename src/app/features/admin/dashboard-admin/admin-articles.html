@@ -269,7 +269,7 @@
               <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                 @if (!img.isMain) {
                   <button type="button" (click)="setExistingMainImage(img.id)" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer border border-white/20">
-                    ⭐ Principal
+                     Principal
                   </button>
                 }
                 <button type="button" (click)="deleteExistingImage(img.id)" class="bg-red-600 hover:bg-red-700 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shadow-lg cursor-pointer">
@@ -293,7 +293,7 @@
               <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                 @if ($index !== 0 && existingImages.length === 0) {
                   <button type="button" (click)="setMainImage($index)" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer border border-white/20">
-                    ⭐ Principal
+                     Principal
                   </button>
                 }
                 <button type="button" (click)="removeImage($index)" class="bg-red-600 hover:bg-red-700 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shadow-lg cursor-pointer">
@@ -390,7 +390,7 @@
       
       <!-- Header Modal -->
       <div class="flex justify-between items-center p-5 border-b border-[#2B2B2B] bg-[#1A1A1A]">
-        <h3 class="text-xl font-bold text-white flex items-center gap-2">✂️ Editar Imagen</h3>
+        <h3 class="text-xl font-bold text-white flex items-center gap-2">️ Editar Imagen</h3>
         <button type="button" (click)="cancelCrop()" [disabled]="isProcessingImage" class="text-neutral-400 hover:text-white transition-colors cursor-pointer bg-[#2B2B2B] hover:bg-[#3B3B3B] p-2 rounded-lg">
            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
