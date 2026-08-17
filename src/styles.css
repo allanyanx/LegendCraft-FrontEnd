@@ -13,3 +13,19 @@ input[type="reset"],
 select {
   cursor: pointer;
 }
+
+/* Scrollbar moderno */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #1A1A1A; 
+}
+::-webkit-scrollbar-thumb {
+  background: #2B2B2B; 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #E53935; 
+}
