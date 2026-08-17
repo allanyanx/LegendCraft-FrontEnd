@@ -25,73 +25,137 @@
       Volver al catálogo
     </button>
 
-    <div class="grid grid-cols-1 gap-12 md:grid-cols-2">
-      <div
-        class="w-full overflow-hidden border rounded-lg bg-[#2B2B2B] border-[#2B2B2B] aspect-[4/5]"
-      >
-        <img [src]="prod.images.length ? prod.images[0].imageUrl : ''" [alt]="prod.name" class="object-cover w-full h-full" />
+    <div class="grid grid-cols-1 gap-12 lg:grid-cols-12">
+      <!-- Galería de imágenes (Izquierda) -->
+      <div class="flex flex-col-reverse gap-4 lg:flex-row lg:col-span-6">
+        <!-- Thumbnails -->
+        @if (prod.images.length > 1) {
+          <div class="flex gap-2 lg:flex-col lg:w-24 shrink-0 overflow-x-auto lg:overflow-y-auto hidden-scrollbar">
+            @for (img of prod.images; track img.id) {
+              <button 
+                (click)="selectedImage.set(getImageUrl(img.imageUrl))"
+                class="overflow-hidden border-2 rounded-lg aspect-square w-20 lg:w-full transition-colors shrink-0"
+                [class.border-[#E53935]]="selectedImage() === getImageUrl(img.imageUrl)"
+                [class.border-transparent]="selectedImage() !== getImageUrl(img.imageUrl)"
+              >
+                <img [src]="getImageUrl(img.imageUrl)" class="object-cover w-full h-full" />
+              </button>
+            }
+          </div>
+        }
+
+        <!-- Main Image with Zoom -->
+        <div 
+          class="flex-1 overflow-hidden border rounded-xl bg-[#2B2B2B] border-[#2B2B2B] relative cursor-crosshair group aspect-square w-full"
+          (mousemove)="onMouseMove($event)" 
+          (mouseleave)="onMouseLeave()"
+        >
+          <img 
+            [src]="selectedImage()" 
+            [alt]="prod.name" 
+            class="object-contain w-full h-full transition-transform duration-150 ease-out"
+            [style.transform]="zoomTransform()" 
+            [style.transform-origin]="zoomOrigin()" 
+          />
+        </div>
       </div>
 
-      <div class="flex flex-col">
-        <h1 class="mb-4 text-4xl font-bold text-white">{{ prod.name }}</h1>
-        <p class="text-3xl font-bold text-[#E53935] mb-6">${{ prod.price }}</p>
-
-        <div class="mb-8">
-          @if (prod.stock > 0) {
-            <span
-              class="px-3 py-1 text-sm font-semibold text-green-400 bg-green-400/10 rounded-full"
-              >En stock ({{ prod.stock }} disponibles)</span
-            >
-          } @else if (prod.isPrintOnDemand) {
-            <span
-              class="px-3 py-1 text-sm font-semibold text-blue-400 bg-blue-400/10 rounded-full"
-              >Impresión bajo demanda (toma {{ prod.printTimeDays }} días)</span
-            >
+      <!-- Detalles del producto (Derecha) -->
+      <div class="flex flex-col lg:col-span-6">
+        <h1 class="mb-2 text-3xl font-bold text-white lg:text-4xl">{{ prod.name }}</h1>
+        
+        <div class="flex items-center gap-4 mb-6">
+          @if (!prod.requiresQuote) {
+            <p class="text-3xl font-bold text-[#E53935]">${{ prod.price | number: '1.2-2' }}</p>
           } @else {
-            <span
-              class="px-3 py-1 text-sm font-semibold text-[#E53935] bg-[#E53935]/10 rounded-full"
-              >Agotado</span
-            >
+            <p class="text-3xl font-bold text-[#E53935]">Precio a cotizar</p>
+          }
+          
+          @if (prod.stock > 0) {
+            <span class="px-3 py-1 text-xs font-semibold text-green-400 bg-green-400/10 rounded-full">
+              En stock ({{ prod.stock }})
+            </span>
+          } @else if (prod.isPrintOnDemand) {
+            <span class="px-3 py-1 text-xs font-semibold text-blue-400 bg-blue-400/10 rounded-full">
+              Impresión 3D ({{ prod.printTimeDays }} días)
+            </span>
+          } @else {
+            <span class="px-3 py-1 text-xs font-semibold text-[#E53935] bg-[#E53935]/10 rounded-full">
+              Agotado
+            </span>
           }
         </div>
 
-        <div class="p-6 mb-8 border rounded-lg bg-[#1A1A1A] border-[#2B2B2B]">
-          <h3 class="mb-4 text-lg font-bold border-b border-[#2B2B2B] pb-2">Especificaciones</h3>
-          <ul class="flex flex-col gap-3">
-            @for (attr of listaAtributos(); track attr[0]) {
-              <li class="flex justify-between text-sm">
-                <span class="text-[#9E9E9E] capitalize">{{ attr[0] }}</span>
-                <span class="font-semibold text-white">{{ attr[1] }}</span>
-              </li>
-            }
-          </ul>
-        </div>
+        @if (prod.description) {
+          <p class="text-[#9E9E9E] mb-6 leading-relaxed whitespace-pre-line">{{ prod.description }}</p>
+        }
 
-        <div class="flex flex-col gap-4 mt-auto sm:flex-row">
-          <div class="flex items-center border border-[#2B2B2B] rounded-lg bg-[#1A1A1A] w-32">
+        @if (prod.highlights && prod.highlights.length > 0) {
+          <div class="mb-8">
+            <h3 class="mb-3 text-lg font-bold text-white">Características</h3>
+            <ul class="flex flex-col gap-2 pl-5 list-disc text-[#9E9E9E]">
+              @for (h of prod.highlights; track $index) {
+                <li>{{ h }}</li>
+              }
+            </ul>
+          </div>
+        }
+
+        @if (listaAtributos().length > 0) {
+          <div class="p-6 mb-8 border rounded-xl bg-[#1A1A1A] border-[#2B2B2B]">
+            <h3 class="mb-4 text-lg font-bold border-b border-[#2B2B2B] pb-2">Especificaciones</h3>
+            <ul class="flex flex-col gap-3">
+              @for (attr of listaAtributos(); track attr[0]) {
+                <li class="flex justify-between text-sm">
+                  <span class="text-[#9E9E9E] capitalize">{{ attr[0] }}</span>
+                  <span class="font-semibold text-white">{{ attr[1] }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+
+        <!-- Actions -->
+        <div class="flex flex-col gap-4 mt-auto">
+          <div class="flex items-center border border-[#2B2B2B] rounded-xl bg-[#1A1A1A] w-full sm:w-1/2">
             <button
               (click)="cambiarCantidad(-1)"
-              class="px-4 py-3 text-[#9E9E9E] hover:text-white disabled:opacity-50"
-              [disabled]="prod.stock === 0 || cantidad() === 1"
+              class="px-6 py-4 text-[#9E9E9E] hover:text-white disabled:opacity-50 transition-colors"
+              [disabled]="(prod.stock === 0 && !prod.isPrintOnDemand) || cantidad() === 1"
             >
               -
             </button>
-            <span class="flex-1 text-center font-semibold text-[#F5F5F5]">{{ cantidad() }}</span>
+            <span class="flex-1 text-center font-bold text-lg text-[#F5F5F5]">{{ cantidad() }}</span>
             <button
               (click)="cambiarCantidad(1)"
-              class="px-4 py-3 text-[#9E9E9E] hover:text-white disabled:opacity-50"
+              class="px-6 py-4 text-[#9E9E9E] hover:text-white disabled:opacity-50 transition-colors"
               [disabled]="(prod.stock === 0 && !prod.isPrintOnDemand) || (!prod.isPrintOnDemand && cantidad() === prod.stock) || cantidad() === 99"
             >
               +
             </button>
           </div>
 
-          <button
-            [disabled]="prod.stock === 0 && !prod.isPrintOnDemand"
-            class="flex-1 px-8 py-3 font-bold text-white transition-colors rounded-lg bg-[#E53935] hover:bg-[#8E0000] disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {{ (prod.stock === 0 && !prod.isPrintOnDemand) ? 'No Disponible' : 'Agregar al Carrito' }}
-          </button>
+          <div class="flex flex-col gap-3 sm:flex-row">
+            @if (!prod.requiresQuote) {
+            <button
+              (click)="agregarAlCarrito(prod)"
+              [disabled]="prod.stock === 0 && !prod.isPrintOnDemand"
+              class="flex-1 px-8 py-4 font-bold text-white transition-all rounded-xl bg-[#E53935] hover:bg-[#8E0000] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#E53935]/20"
+            >
+              {{ (prod.stock === 0 && !prod.isPrintOnDemand) ? 'No Disponible' : 'Agregar al Carrito' }}
+            </button>
+            }
+            
+            <button
+              (click)="cotizarPorWhatsApp(prod)"
+              class="flex-1 px-8 py-4 font-bold text-white transition-all rounded-xl bg-[#25D366] hover:bg-[#128C7E] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-[#25D366]/20"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-whatsapp" viewBox="0 0 16 16">
+                <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
+              </svg>
+              {{ prod.requiresQuote ? 'Cotizar' : 'WhatsApp' }}
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -13,7 +13,7 @@ export class ArticuloService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/articles`;
 
-  getArticulos(pageNumber: number = 1, pageSize: number = 20, search: string = '', attributeValues: number[] = []): Observable<PagedResult<ArticuloLista>> {
+  getArticulos(pageNumber: number = 1, pageSize: number = 20, search: string = '', attributeValues: number[] = [], maxPrice?: number, sortBy?: string): Observable<PagedResult<ArticuloLista>> {
     let url = `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`;
     
     // Adjuntamos los filtros como un array al QueryString (Ej: &attributeValues=1&attributeValues=3)
@@ -21,6 +21,14 @@ export class ArticuloService {
       attributeValues.forEach(val => {
         url += `&attributeValues=${val}`;
       });
+    }
+
+    if (maxPrice !== undefined) {
+      url += `&maxPrice=${maxPrice}`;
+    }
+    
+    if (sortBy) {
+      url += `&sortBy=${sortBy}`;
     }
 
     return this.http.get<PagedResult<ArticuloLista>>(url);

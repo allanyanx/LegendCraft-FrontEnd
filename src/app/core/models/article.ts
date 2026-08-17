@@ -1,6 +1,7 @@
 export interface ArticleListResponse {
   id: number;
   name: string;
+  description: string;
   price: number;
   stock: number;
   isPrintOnDemand: boolean;
@@ -10,6 +11,7 @@ export interface ArticleListResponse {
 
 export interface ArticleCreateRequest {
   name: string;
+  description: string;
   price: number;
   stock: number;
   isPrintOnDemand: boolean;

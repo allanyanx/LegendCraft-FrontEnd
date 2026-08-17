@@ -1,5 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-search-bar',
@@ -8,15 +11,28 @@ import { Router } from '@angular/router';
 })
 export class SearchBar {
   private router = inject(Router);
+  searchSubject = new Subject<string>();
 
-  buscar(termino: string) {
+  constructor() {
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+      takeUntilDestroyed()
+    ).subscribe(term => {
+      this.ejecutarBusqueda(term);
+    });
+  }
+
+  onInput(termino: string) {
+    this.searchSubject.next(termino);
+  }
+
+  ejecutarBusqueda(termino: string) {
     const busquedaLimpiada = termino.trim();
 
     if (busquedaLimpiada) {
-      // Navega a la ruta del catálogo agregando ?q=termino_escrito
       this.router.navigate(['/shop'], { queryParams: { q: busquedaLimpiada } });
     } else {
-      // Si el usuario borró el texto y presionó buscar, navegamos al catálogo sin parámetros
       this.router.navigate(['/shop']);
     }
   }

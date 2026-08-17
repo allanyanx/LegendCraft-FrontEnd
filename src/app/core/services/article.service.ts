@@ -11,13 +11,19 @@ export class ArticleService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/Articles`;
 
-  getArticles(page: number = 1, pageSize: number = 10, search?: string): Observable<PagedResult<ArticleListResponse>> {
+  getArticles(page: number = 1, pageSize: number = 10, search?: string, attributeValues?: number[]): Observable<PagedResult<ArticleListResponse>> {
     let params = new HttpParams()
       .set('pageNumber', page.toString())
       .set('pageSize', pageSize.toString());
 
     if (search) {
       params = params.set('search', search);
+    }
+    
+    if (attributeValues && attributeValues.length > 0) {
+      attributeValues.forEach(val => {
+        params = params.append('attributeValues', val.toString());
+      });
     }
 
     return this.http.get<PagedResult<ArticleListResponse>>(this.apiUrl, { params });

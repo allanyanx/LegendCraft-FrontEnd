@@ -42,7 +42,7 @@ export class Shop implements OnInit, OnDestroy {
 
   // Filtros UI Dinámicos
   atributosDisponibles = signal<AtributoTipo[]>([]);
-  precioMaximo = signal<number>(200);
+  precioMaximo = signal<number>(400);
   criterioOrden = signal<string>('relevantes');
 
   // Set de IDs de los valores de atributo seleccionados
@@ -97,7 +97,7 @@ export class Shop implements OnInit, OnDestroy {
     const arrAtributos = Array.from(this.filtrosActivos());
 
     // Llamada real al backend con paginación y atributos
-    this.articuloService.getArticulos(this.paginaActual(), this.itemsPorPagina(), this.terminoBusqueda(), arrAtributos)
+    this.articuloService.getArticulos(this.paginaActual(), this.itemsPorPagina(), this.terminoBusqueda(), arrAtributos, this.precioMaximo(), this.criterioOrden())
       .subscribe({
         next: (response) => {
           this.articulos.set(response.items);
@@ -144,11 +144,13 @@ export class Shop implements OnInit, OnDestroy {
   actualizarPrecioDirecto(nuevoPrecio: number) {
     this.precioMaximo.set(nuevoPrecio);
     this.paginaActual.set(1);
+    this.cargarDatos();
   }
 
   actualizarOrden(event: Event) {
     const select = event.target as HTMLSelectElement;
     this.criterioOrden.set(select.value);
     this.paginaActual.set(1);
+    this.cargarDatos();
   }
 }
