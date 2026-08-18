@@ -9,18 +9,25 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const authService = inject(AuthService);
 
-  // Evitar error de localStorage is not defined durante Server-Side Rendering (SSR)
   if (typeof window !== 'undefined') {
+    let guestId = localStorage.getItem('guestId');
+    if (!guestId) {
+      guestId = crypto.randomUUID();
+      localStorage.setItem('guestId', guestId);
+    }
+
     const token = localStorage.getItem('token');
+    let headersConfig: any = {
+      'X-Guest-Id': guestId
+    };
     
     if (token) {
-      // Clonamos la petición y agregamos el header Authorization
-      req = req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      headersConfig['Authorization'] = `Bearer ${token}`;
     }
+
+    req = req.clone({
+      setHeaders: headersConfig
+    });
   }
 
   return next(req).pipe(

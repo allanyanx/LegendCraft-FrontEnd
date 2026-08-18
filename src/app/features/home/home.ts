@@ -1,16 +1,15 @@
 import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ArticuloService } from '../../core/services/articulo.service';
+import { environment } from '../../../environments/environment';
+import { ArticleService } from '../../core/services/article.service';
+import { BannerService } from '../../core/services/banner.service';
+import { FaqService } from '../../core/services/faq.service';
 import { ArticuloLista } from '../../core/models/articulo-lista';
+import { BannerLista } from '../../core/models/banner-lista';
+import { FaqLista } from '../../core/models/faq-lista';
 import { ProductCard } from '../../shared/components/product-card/product-card';
 import { ProductSkeleton } from '../shop/components/product-skeleton/product-skeleton';
 import { FaqItem } from './components/faq-item/faq-item';
-
-interface CarouselSlide {
-  title: string;
-  description: string;
-  imageUrl: string;
-}
 
 @Component({
   selector: 'app-home',
@@ -20,7 +19,9 @@ interface CarouselSlide {
   styleUrl: './home.css',
 })
 export class Home implements OnInit, OnDestroy {
-  private articuloService = inject(ArticuloService);
+  private articuloService = inject(ArticleService);
+  private bannerService = inject(BannerService);
+  private faqService = inject(FaqService);
 
   // PRODUCTOS RECIENTES
   articulosRecientes = signal<ArticuloLista[]>([]);
@@ -31,63 +32,71 @@ export class Home implements OnInit, OnDestroy {
   private cacheProductos = new Map<string, ArticuloLista[]>();
 
   // CARRUSEL
-  diapositivas: CarouselSlide[] = [
-    {
-      title: 'LegendCraft',
-      description: 'Descubre figuras exclusivas impresas en alta calidad para tu colección.',
-      imageUrl: 'https://placehold.co/400x500/2B2B2B/E53935?text=Coleccionables',
-    },
-    {
-      title: 'Impresión Bajo Demanda',
-      description: 'Si no lo tenemos en stock, lo imprimimos especialmente para ti.',
-      imageUrl: 'https://placehold.co/400x500/2B2B2B/FFFFFF?text=Impresion+3D',
-    },
-    {
-      title: 'Cosplay & Props',
-      description: 'Armaduras y accesorios a tamaño real listos para tu próximo evento.',
-      imageUrl: 'https://placehold.co/400x500/2B2B2B/FFFFFF?text=Cosplay',
-    }
-  ];
+  diapositivas = signal<BannerLista[]>([]);
   slideActual = signal<number>(0);
   private intervaloCarrusel: any;
 
   // PREGUNTAS FRECUENTES
-  faqs = [
-    {
-      q: '¿Cómo se realiza el envío?',
-      a: 'Hacemos envíos nacionales e internacionales a través de agencias certificadas. El tiempo de entrega varía según tu ubicación y si el producto es impreso bajo demanda.'
-    },
-    {
-      q: '¿Cómo se realiza el pedido?',
-      a: 'Agrega los artículos al carrito, ve a Pagar y completa tus datos. Si tienes cuenta, tus datos se autocompletarán. Puedes pagar por transferencia o PayPal.'
-    },
-    {
-      q: '¿Qué materiales usan?',
-      a: 'Utilizamos resina de alta precisión 8K y PLA reforzado, garantizando la máxima durabilidad y un nivel de detalle asombroso en cada figura.'
-    }
-  ];
+  faqs = signal<FaqLista[]>([]);
 
   ngOnInit() {
+    this.cargarBanners();
+    this.cargarFaqs();
     this.cargarProductosPreview();
-    this.iniciarCarrusel();
+  }
+
+  cargarFaqs() {
+    this.faqService.getFaqs().subscribe({
+      next: (faqs) => this.faqs.set(faqs),
+      error: (err) => console.error('Error al cargar faqs', err)
+    });
+  }
+
+  cargarBanners() {
+    this.bannerService.getBanners().subscribe({
+      next: (banners) => {
+        this.diapositivas.set(banners);
+        if (banners.length > 0) {
+          this.iniciarCarrusel();
+        }
+      },
+      error: (err) => console.error('Error al cargar banners', err)
+    });
   }
 
   cargarProductosPreview() {
-    const busqueda = this.categoriaActiva() === 'Nuevos' ? '' : this.categoriaActiva();
+    let busqueda = '';
+    let sortBy = '';
+    let isPrintOnDemand: boolean | undefined = undefined;
+    let isOnSale: boolean | undefined = undefined;
+
+    switch(this.categoriaActiva()) {
+      case 'Nuevos':
+        sortBy = 'reciente';
+        break;
+      case 'Más Relevantes':
+        sortBy = 'relevantes';
+        break;
+      case 'Ofertas':
+        isOnSale = true;
+        break;
+      case 'Bajo Pedido':
+        isPrintOnDemand = true;
+        break;
+    }
     
-    // 1. Revisar si ya tenemos esta categoría en caché
-    if (this.cacheProductos.has(busqueda)) {
-      this.articulosRecientes.set(this.cacheProductos.get(busqueda)!);
+    const cacheKey = this.categoriaActiva();
+
+    if (this.cacheProductos.has(cacheKey)) {
+      this.articulosRecientes.set(this.cacheProductos.get(cacheKey)!);
       return;
     }
 
-    // 2. Si no está en caché, le pedimos al backend
     this.isLoading.set(true);
-    this.articuloService.getArticulos(1, 4, busqueda).subscribe({
-      next: (res) => {
+    this.articuloService.getArticles(1, 4, busqueda, [], undefined, sortBy, isPrintOnDemand, isOnSale).subscribe({
+      next: (res: any) => {
         this.articulosRecientes.set(res.items);
-        // Guardamos en caché para futuras consultas
-        this.cacheProductos.set(busqueda, res.items);
+        this.cacheProductos.set(cacheKey, res.items);
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false)
@@ -118,12 +127,17 @@ export class Home implements OnInit, OnDestroy {
   }
 
   siguienteSlide() {
-    this.slideActual.update(n => (n + 1) % this.diapositivas.length);
+    this.slideActual.update(n => (n + 1) % this.diapositivas().length);
   }
 
   setSlide(index: number) {
     this.slideActual.set(index);
     this.detenerCarrusel();
     this.iniciarCarrusel(); 
+  }
+
+  getImageUrl(url: string | undefined): string {
+    if (!url) return '';
+    return url.startsWith('/') ? environment.apiUrl.replace('/api', '') + url : url;
   }
 }

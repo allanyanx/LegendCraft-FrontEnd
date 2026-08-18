@@ -10,8 +10,8 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductCard } from '../../shared/components/product-card/product-card';
 import { ProductSkeleton } from './components/product-skeleton/product-skeleton';
-import { ArticuloService } from '../../core/services/articulo.service';
-import { AtributoService } from '../../core/services/atributo.service';
+import { ArticleService } from '../../core/services/article.service';
+import { AttributeService } from '../../core/services/attribute.service';
 import { ArticuloLista } from '../../core/models/articulo-lista';
 import { AtributoTipo } from '../../core/models/atributo-tipo';
 import { EmptyState } from './components/empty-state/empty-state';
@@ -24,8 +24,8 @@ import { FilterSidebar } from './components/filter-sidebar/filter-sidebar';
   templateUrl: './shop.html',
 })
 export class Shop implements OnInit, OnDestroy {
-  private articuloService = inject(ArticuloService);
-  private atributoService = inject(AtributoService);
+  private articuloService = inject(ArticleService);
+  private atributoService = inject(AttributeService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -74,14 +74,23 @@ export class Shop implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
-      this.terminoBusqueda.set(params['q'] || '');
-      this.cargarDatos();
+    // Cargar los atributos dinámicos una sola vez al inicializar
+    this.atributoService.getAllAttributes().subscribe({
+      next: (attrs: any) => this.atributosDisponibles.set(attrs)
     });
 
-    // Cargar los atributos dinámicos una sola vez al inicializar
-    this.atributoService.getAtributos().subscribe({
-      next: (attrs) => this.atributosDisponibles.set(attrs)
+    this.route.queryParams.subscribe((params) => {
+      this.terminoBusqueda.set(params['q'] || '');
+      
+      const attrParam = params['attr'];
+      if (attrParam) {
+        const attrId = parseInt(attrParam, 10);
+        if (!isNaN(attrId)) {
+          this.filtrosActivos.set(new Set([attrId]));
+        }
+      }
+      
+      this.cargarDatos();
     });
   }
 
@@ -97,9 +106,9 @@ export class Shop implements OnInit, OnDestroy {
     const arrAtributos = Array.from(this.filtrosActivos());
 
     // Llamada real al backend con paginación y atributos
-    this.articuloService.getArticulos(this.paginaActual(), this.itemsPorPagina(), this.terminoBusqueda(), arrAtributos, this.precioMaximo(), this.criterioOrden())
+    this.articuloService.getArticles(this.paginaActual(), this.itemsPorPagina(), this.terminoBusqueda(), arrAtributos, this.precioMaximo(), this.criterioOrden())
       .subscribe({
-        next: (response) => {
+        next: (response: any) => {
           this.articulos.set(response.items);
           this.totalItems.set(response.totalCount);
           this.isLoading.set(false);

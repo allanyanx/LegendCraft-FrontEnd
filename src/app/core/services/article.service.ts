@@ -11,7 +11,16 @@ export class ArticleService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/Articles`;
 
-  getArticles(page: number = 1, pageSize: number = 10, search?: string, attributeValues?: number[]): Observable<PagedResult<ArticleListResponse>> {
+  getArticles(
+    page: number = 1, 
+    pageSize: number = 10, 
+    search?: string, 
+    attributeValues?: number[],
+    maxPrice?: number,
+    sortBy?: string,
+    isPrintOnDemand?: boolean,
+    isOnSale?: boolean
+  ): Observable<PagedResult<ArticleListResponse>> {
     let params = new HttpParams()
       .set('pageNumber', page.toString())
       .set('pageSize', pageSize.toString());
@@ -24,6 +33,22 @@ export class ArticleService {
       attributeValues.forEach(val => {
         params = params.append('attributeValues', val.toString());
       });
+    }
+
+    if (maxPrice !== undefined) {
+      params = params.set('maxPrice', maxPrice.toString());
+    }
+
+    if (sortBy) {
+      params = params.set('sortBy', sortBy);
+    }
+
+    if (isPrintOnDemand !== undefined) {
+      params = params.set('isPrintOnDemand', isPrintOnDemand.toString());
+    }
+
+    if (isOnSale !== undefined) {
+      params = params.set('isOnSale', isOnSale.toString());
     }
 
     return this.http.get<PagedResult<ArticleListResponse>>(this.apiUrl, { params });

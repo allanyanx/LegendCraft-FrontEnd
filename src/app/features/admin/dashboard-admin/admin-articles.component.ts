@@ -9,6 +9,7 @@ import { AttributeService } from '../../../core/services/attribute.service';
 import { ArticleListResponse } from '../../../core/models/article';
 import { AttributeTypeResponse } from '../../../core/models/attribute';
 import { ToastService } from '../../../core/services/toast.service';
+import { ConfirmService } from '../../../core/services/confirm.service';
 import { ImageCropperComponent, ImageCroppedEvent } from 'ngx-image-cropper';
 import imageCompression from 'browser-image-compression';
 import { environment } from '../../../../environments/environment';
@@ -22,10 +23,11 @@ import { environment } from '../../../../environments/environment';
 export class AdminArticlesComponent implements OnInit {
   private articleService = inject(ArticleService);
   private attributeService = inject(AttributeService);
+  private toastService = inject(ToastService);
+  private confirmService = inject(ConfirmService);
   private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   private platformId = inject(PLATFORM_ID);
-  private toastService = inject(ToastService);
 
   // Lista
   articles: ArticleListResponse[] = [];
@@ -50,6 +52,7 @@ export class AdminArticlesComponent implements OnInit {
   // Filtros de tabla
   showFilterMenu = false;
   activeFilterIds: Set<number> = new Set();
+  activeFilterTabId: number | null = null;
 
   // Imágenes
   imageChangedEvent: any = '';
@@ -69,6 +72,8 @@ export class AdminArticlesComponent implements OnInit {
       isPrintOnDemand: [true],
       requiresQuote: [false],
       printTimeDays: [3, [Validators.required, Validators.min(0)]],
+      isOnSale: [false],
+      discountPercentage: [0, [Validators.min(0), Validators.max(100)]],
       highlights: this.fb.array([this.fb.control('', Validators.required)], Validators.required)
     });
 
@@ -108,6 +113,22 @@ export class AdminArticlesComponent implements OnInit {
 
   toggleFilterMenu() {
     this.showFilterMenu = !this.showFilterMenu;
+    if (!this.showFilterMenu) {
+      this.activeFilterTabId = null; // Reset al cerrar
+    }
+  }
+
+  toggleFilterTab(typeId: number) {
+    if (this.activeFilterTabId === typeId) {
+      this.activeFilterTabId = null;
+    } else {
+      this.activeFilterTabId = typeId;
+    }
+  }
+
+  getActiveFilterCountForType(type: AttributeTypeResponse): number {
+    if (!type.values) return 0;
+    return type.values.filter(v => this.activeFilterIds.has(v.id)).length;
   }
 
   toggleTableFilter(id: number, event: any) {
@@ -376,7 +397,9 @@ export class AdminArticlesComponent implements OnInit {
       stock: 0,
       isPrintOnDemand: true,
       requiresQuote: false,
-      printTimeDays: 3
+      printTimeDays: 3,
+      isOnSale: false,
+      discountPercentage: 0
     });
     this.highlights.clear();
     this.addHighlight(); // Uno vacío por defecto
@@ -402,7 +425,9 @@ export class AdminArticlesComponent implements OnInit {
           stock: article.stock,
           isPrintOnDemand: article.isPrintOnDemand,
           requiresQuote: article.requiresQuote,
-          printTimeDays: article.printTimeDays
+          printTimeDays: article.printTimeDays,
+          isOnSale: article.isOnSale,
+          discountPercentage: article.discountPercentage || 0
         });
         
         this.highlights.clear();
@@ -441,23 +466,26 @@ export class AdminArticlesComponent implements OnInit {
     });
   }
 
-  deleteArticle(id: number) {
-    if (confirm('¿Estás seguro de que deseas eliminar este artículo?')) {
+  async deleteArticle(id: number) {
+    const confirmed = await this.confirmService.confirm('¿Estás seguro de que deseas eliminar este artículo?');
+    if (confirmed) {
       this.articleService.deleteArticle(id).subscribe({
         next: () => {
-          this.toastService.success('Artículo eliminado correctamente.');
+          this.toastService.success('Artículo eliminado correctamente');
           this.loadArticles(1);
         },
-        error: () => {
-          this.toastService.error('Error al eliminar el artículo.');
+        error: (err) => {
+          this.toastService.error('Error al eliminar el artículo');
+          console.error(err);
         }
       });
     }
   }
 
-  deleteExistingImage(imageId: number) {
+  async deleteExistingImage(imageId: number) {
     if (!this.editingArticleId) return;
-    if (confirm('¿Eliminar esta imagen?')) {
+    const confirmed = await this.confirmService.confirm('¿Eliminar esta imagen?');
+    if (confirmed) {
       this.articleService.deleteImage(this.editingArticleId, imageId).subscribe({
         next: () => {
           this.existingImages = this.existingImages.filter(img => img.id !== imageId);
@@ -506,6 +534,8 @@ export class AdminArticlesComponent implements OnInit {
       isPrintOnDemand: formValue.isPrintOnDemand,
       requiresQuote: formValue.requiresQuote,
       printTimeDays: formValue.printTimeDays,
+      isOnSale: formValue.isOnSale,
+      discountPercentage: formValue.discountPercentage,
       highlights: cleanHighlights,
       attributeValueIds: Array.from(this.selectedAttributeIds)
     };

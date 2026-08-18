@@ -6,6 +6,8 @@ import { AdminProfileComponent } from './admin-profile.component';
 import { AdminArticlesComponent } from './admin-articles.component';
 import { AdminOrdersComponent } from './admin-orders.component';
 import { AdminUsersComponent } from './admin-users.component';
+import { AdminAttributes } from '../admin-attributes/admin-attributes';
+import { AdminHomeComponent } from './admin-home.component';
 
 @Component({
   selector: 'app-dashboard-admin',
@@ -18,7 +20,9 @@ import { AdminUsersComponent } from './admin-users.component';
     AdminProfileComponent,
     AdminArticlesComponent,
     AdminOrdersComponent,
-    AdminUsersComponent
+    AdminUsersComponent,
+    AdminAttributes,
+    AdminHomeComponent
   ],
 })
 export class DashboardAdmin {

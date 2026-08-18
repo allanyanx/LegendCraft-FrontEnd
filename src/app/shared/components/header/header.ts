@@ -1,9 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { SearchBar } from '../search-bar/search-bar';
 import { CartWidget } from '../cart-widget/cart-widget';
 import { Router, NavigationEnd, RouterModule } from '@angular/router';
 import { filter } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
+import { AttributeService } from '../../../core/services/attribute.service';
+import { AtributoTipo } from '../../../core/models/atributo-tipo';
 
 @Component({
   selector: 'app-header',
@@ -12,11 +14,22 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
-export class Header {
+export class Header implements OnInit {
   isSidebarOpen = false;
+  isMobileCategoriesOpen = false;
   isShopRoute = false; // Variable reactiva para la barra de búsqueda
   private router = inject(Router);
   authService = inject(AuthService);
+  private atributoService = inject(AttributeService);
+
+  atributosDisponibles = signal<AtributoTipo[]>([]);
+
+  categoriaFiltro = computed(() => {
+    return this.atributosDisponibles().find(a => 
+      a.name.toLowerCase() === 'categoría' || 
+      a.name.toLowerCase() === 'categoria'
+    );
+  });
 
   constructor() {
     this.validarRutaTienda(this.router.url);
@@ -26,6 +39,12 @@ export class Header {
       .subscribe((event: any) => {
         this.validarRutaTienda(event.urlAfterRedirects);
       });
+  }
+
+  ngOnInit() {
+    this.atributoService.getAllAttributes().subscribe({
+      next: (attrs: any) => this.atributosDisponibles.set(attrs)
+    });
   }
 
   private validarRutaTienda(url: string) {
@@ -47,5 +66,14 @@ export class Header {
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  toggleMobileCategories() {
+    this.isMobileCategoriesOpen = !this.isMobileCategoriesOpen;
+  }
+
+  navigateToFilter(valorId: number) {
+    this.isSidebarOpen = false;
+    this.router.navigate(['/shop'], { queryParams: { attr: valorId } });
   }
 }

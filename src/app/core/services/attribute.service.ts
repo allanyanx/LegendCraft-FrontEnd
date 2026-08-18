@@ -22,4 +22,20 @@ export class AttributeService {
   createAttributeValue(typeId: number, data: AttributeValueCreateRequest): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/types/${typeId}/values`, data);
   }
+
+  updateAttributeType(id: number, data: AttributeTypeCreateRequest): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/types/${id}`, data);
+  }
+
+  deleteAttributeType(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/types/${id}`);
+  }
+
+  updateAttributeValue(id: number, data: AttributeValueCreateRequest): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/values/${id}`, data);
+  }
+
+  deleteAttributeValue(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/values/${id}`);
+  }
 }

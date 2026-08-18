@@ -28,7 +28,7 @@ export class DashboardUser implements OnInit {
   profileSuccess = signal('');
   profileError = signal('');
 
-  profileForm = this.fb.group({
+  profileForm = this.fb.nonNullable.group({
     firstName: ['', Validators.required],
     lastName: ['', Validators.required]
   });
@@ -39,7 +39,7 @@ export class DashboardUser implements OnInit {
   passwordSuccess = signal('');
   passwordError = signal('');
 
-  passwordForm = this.fb.group({
+  passwordForm = this.fb.nonNullable.group({
     currentPassword: ['', Validators.required],
     newPassword: ['', [Validators.required, Validators.minLength(6)]],
     confirmNewPassword: ['', Validators.required]
@@ -95,9 +95,9 @@ export class DashboardUser implements OnInit {
           this.authService.handleAuthResponse(res.token);
         }
       },
-      error: (err) => {
+      error: (err: Error) => {
         this.isUpdatingProfile.set(false);
-        this.profileError.set(err.error?.Message || err.error?.title || 'Error al actualizar perfil');
+        this.profileError.set(err.message);
       }
     });
   }
@@ -127,19 +127,9 @@ export class DashboardUser implements OnInit {
         this.passwordSuccess.set('Contraseña actualizada correctamente.');
         this.passwordForm.reset();
       },
-      error: (err) => {
+      error: (err: Error) => {
         this.isUpdatingPassword.set(false);
-        let msj = 'Ocurrió un error al cambiar la contraseña.';
-        if (err.error?.errors && Array.isArray(err.error.errors)) {
-          msj = err.error.errors.join(' | ');
-        } else if (err.error?.Errors && Array.isArray(err.error.Errors)) {
-          msj = err.error.Errors.join(' | ');
-        } else if (err.error?.message) {
-          msj = err.error.message;
-        } else if (err.error?.Message) {
-          msj = err.error.Message;
-        }
-        this.passwordError.set(msj);
+        this.passwordError.set(err.message);
       }
     });
   }

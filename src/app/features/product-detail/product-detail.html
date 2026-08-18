@@ -66,7 +66,19 @@
         
         <div class="flex items-center gap-4 mb-6">
           @if (!prod.requiresQuote) {
-            <p class="text-3xl font-bold text-[#E53935]">${{ prod.price | number: '1.2-2' }}</p>
+            @if (prod.isOnSale && prod.discountPrice) {
+              <div class="flex flex-col">
+                <span class="text-lg line-through text-neutral-500">${{ prod.price | number: '1.2-2' }}</span>
+                <div class="flex items-center gap-3">
+                  <p class="text-3xl font-bold text-[#E53935]">${{ prod.discountPrice | number: '1.2-2' }}</p>
+                  @if (prod.discountPercentage) {
+                    <span class="px-2 py-1 text-sm font-bold text-white bg-[#E53935] rounded-md">-{{ prod.discountPercentage }}%</span>
+                  }
+                </div>
+              </div>
+            } @else {
+              <p class="text-3xl font-bold text-[#E53935]">${{ prod.price | number: '1.2-2' }}</p>
+            }
           } @else {
             <p class="text-3xl font-bold text-[#E53935]">Precio a cotizar</p>
           }
