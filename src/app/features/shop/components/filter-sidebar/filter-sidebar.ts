@@ -14,9 +14,13 @@ export class FilterSidebar {
   onFiltroToggle = output<number>();
   onPrecioChange = output<number>();
 
-  filtrosExpandidos = signal<Record<number, boolean>>({});
+  activeAccordionId = signal<number | null>(null);
 
-  toggleExpandir(tipoId: number) {
-    this.filtrosExpandidos.update(v => ({ ...v, [tipoId]: !v[tipoId] }));
+  toggleAccordion(tipoId: number) {
+    this.activeAccordionId.update(current => current === tipoId ? null : tipoId);
+  }
+
+  getActiveFilterCountForType(tipo: AtributoTipo): number {
+    return tipo.values.filter(v => this.filtrosActivos().has(v.id)).length;
   }
 }

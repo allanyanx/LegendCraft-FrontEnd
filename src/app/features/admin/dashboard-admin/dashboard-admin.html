@@ -8,19 +8,48 @@
     
     <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
       <a routerLink="/shop" class="w-full flex items-center justify-center gap-2 px-4 py-3 mb-6 text-sm font-bold text-[#E53935] border border-[#E53935]/30 rounded-lg hover:bg-[#E53935]/10 transition-all">
-         Volver a la Tienda
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        Volver a la Tienda
       </a>
       <button (click)="setTab('articles')" [class.bg-red-950]="activeTab === 'articles'" [class.text-[#E53935]]="activeTab === 'articles'" [class.border-[#E53935]]="activeTab === 'articles'" class="w-full flex items-center gap-3 px-4 py-3 text-left text-sm font-medium text-neutral-400 border border-transparent rounded-lg hover:bg-[#2B2B2B] transition-all">
-         Artículos
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+        </svg>
+        Artículos
+      </button>
+      <button (click)="setTab('home-edition')" [class.bg-red-950]="activeTab === 'home-edition'" [class.text-[#E53935]]="activeTab === 'home-edition'" [class.border-[#E53935]]="activeTab === 'home-edition'" class="w-full flex items-center gap-3 px-4 py-3 text-left text-sm font-medium text-neutral-400 border border-transparent rounded-lg hover:bg-[#2B2B2B] transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+        </svg>
+        Edición Home
+      </button>
+      <button (click)="setTab('attributes')" [class.bg-red-950]="activeTab === 'attributes'" [class.text-[#E53935]]="activeTab === 'attributes'" [class.border-[#E53935]]="activeTab === 'attributes'" class="w-full flex items-center gap-3 px-4 py-3 text-left text-sm font-medium text-neutral-400 border border-transparent rounded-lg hover:bg-[#2B2B2B] transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
+        </svg>
+        Atributos
       </button>
       <button (click)="setTab('orders')" [class.bg-red-950]="activeTab === 'orders'" [class.text-[#E53935]]="activeTab === 'orders'" [class.border-[#E53935]]="activeTab === 'orders'" class="w-full flex items-center gap-3 px-4 py-3 text-left text-sm font-medium text-neutral-400 border border-transparent rounded-lg hover:bg-[#2B2B2B] transition-all">
-         Órdenes
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+        </svg>
+        Órdenes
       </button>
       <button (click)="setTab('users')" [class.bg-red-950]="activeTab === 'users'" [class.text-[#E53935]]="activeTab === 'users'" [class.border-[#E53935]]="activeTab === 'users'" class="w-full flex items-center gap-3 px-4 py-3 text-left text-sm font-medium text-neutral-400 border border-transparent rounded-lg hover:bg-[#2B2B2B] transition-all">
-         Usuarios
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+        </svg>
+        Usuarios
       </button>
       <button (click)="setTab('profile')" [class.bg-red-950]="activeTab === 'profile'" [class.text-[#E53935]]="activeTab === 'profile'" [class.border-[#E53935]]="activeTab === 'profile'" class="w-full flex items-center gap-3 px-4 py-3 text-left text-sm font-medium text-neutral-400 border border-transparent rounded-lg hover:bg-[#2B2B2B] transition-all">
-        ️ Mi Perfil
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71-.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738c-.32-.447-.269-1.06.12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        </svg>
+        Mi Perfil
       </button>
     </nav>
 
@@ -37,8 +66,10 @@
     <header class="h-16 bg-[#1A1A1A]/80 backdrop-blur-sm border-b border-[#2B2B2B] flex items-center justify-between px-8 z-10">
       <h2 class="text-lg font-bold text-neutral-200 capitalize">
         @if (activeTab === 'articles') { Gestión de Artículos }
+        @else if (activeTab === 'attributes') { Gestión de Atributos }
         @else if (activeTab === 'orders') { Historial de Órdenes }
         @else if (activeTab === 'users') { Usuarios Registrados }
+        @else if (activeTab === 'home-edition') { Edición del Home }
         @else if (activeTab === 'profile') { Configuración de Cuenta }
       </h2>
       <div class="flex items-center gap-3">
@@ -54,6 +85,9 @@
       @if (activeTab === 'articles') {
         <app-admin-articles></app-admin-articles>
       }
+      @if (activeTab === 'attributes') {
+        <app-admin-attributes></app-admin-attributes>
+      }
       @if (activeTab === 'orders') {
         <app-admin-orders></app-admin-orders>
       }
@@ -62,6 +96,9 @@
       }
       @if (activeTab === 'profile') {
         <app-admin-profile></app-admin-profile>
+      }
+      @if (activeTab === 'home-edition') {
+        <app-admin-home></app-admin-home>
       }
     </div>
   </main>

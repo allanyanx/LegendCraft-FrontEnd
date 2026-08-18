@@ -6,8 +6,11 @@ import { environment } from '../../../environments/environment';
 export interface CartItem {
   id: number;
   articleId: number;
+  articleName: string;
+  price: number;
   quantity: number;
-  article: any;
+  subtotal: number;
+  imageUrl: string;
 }
 
 export interface CartResponse {

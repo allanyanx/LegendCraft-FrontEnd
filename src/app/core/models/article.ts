@@ -6,6 +6,9 @@ export interface ArticleListResponse {
   stock: number;
   isPrintOnDemand: boolean;
   printTimeDays: number;
+  isOnSale: boolean;
+  discountPrice?: number;
+  discountPercentage?: number;
   mainImageUrl: string;
 }
 
@@ -16,6 +19,8 @@ export interface ArticleCreateRequest {
   stock: number;
   isPrintOnDemand: boolean;
   printTimeDays: number;
+  isOnSale: boolean;
+  discountPercentage?: number;
   highlights: string[];
   attributeValueIds: number[];
 }

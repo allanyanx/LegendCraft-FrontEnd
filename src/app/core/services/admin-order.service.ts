@@ -7,15 +7,17 @@ import { OrderResponse } from '../models/order-response';
 @Injectable({
   providedIn: 'root'
 })
-export class OrderService {
+export class AdminOrderService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/orders`;
 
-  getMyOrders(): Observable<OrderResponse[]> {
-    return this.http.get<OrderResponse[]>(`${this.apiUrl}/my-orders`);
+  getAllOrders(): Observable<OrderResponse[]> {
+    return this.http.get<OrderResponse[]>(`${this.apiUrl}/all`);
   }
 
-  placeOrder(data: any): Observable<OrderResponse> {
-    return this.http.post<OrderResponse>(this.apiUrl, data);
+  updateOrderStatus(id: number, status: number): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/status`, status, {
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }

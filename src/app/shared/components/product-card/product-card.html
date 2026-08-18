@@ -9,12 +9,22 @@
       [alt]="articulo().name"
       class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
     />
-    <!-- Etiqueta de Agotado (Solo si el stock es 0 y no es PrintOnDemand) -->
+    <!-- Etiqueta de Agotado o Oferta -->
     @if (articulo().stock === 0 && !articulo().isPrintOnDemand) {
       <span
         class="absolute px-2 py-1 text-xs font-bold rounded top-2 right-2 bg-black/80 text-[#E53935]"
       >
         Agotado
+      </span>
+    } @else if (articulo().isOnSale) {
+      <span
+        class="absolute px-2 py-1 text-xs font-bold rounded top-2 right-2 bg-[#E53935] text-white"
+      >
+        @if (articulo().discountPercentage) {
+          -{{ articulo().discountPercentage }}%
+        } @else {
+          Oferta
+        }
       </span>
     }
   </div>
@@ -26,9 +36,14 @@
     </h3>
 
     <div class="flex items-center justify-between mt-auto">
-      <span class="text-xl font-bold text-[#E53935]"
-        >${{ articulo().price | number: '1.2-2' }}</span
-      >
+      @if (articulo().isOnSale && articulo().discountPrice) {
+        <div class="flex flex-col">
+          <span class="text-sm line-through text-neutral-500">${{ articulo().price | number: '1.2-2' }}</span>
+          <span class="text-xl font-bold text-[#E53935]">${{ articulo().discountPrice | number: '1.2-2' }}</span>
+        </div>
+      } @else {
+        <span class="text-xl font-bold text-[#E53935]">${{ articulo().price | number: '1.2-2' }}</span>
+      }
 
       <!-- Botón Agregar al Carrito -->
       <button

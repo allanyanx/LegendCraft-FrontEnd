@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ArticuloService } from '../../core/services/articulo.service';
+import { ArticleService } from '../../core/services/article.service';
 import { ArticuloDetalle } from '../../core/models/articulo-detalle';
 import { CartService } from '../../core/services/cart.service';
 import { ToastService } from '../../core/services/toast.service';
@@ -16,7 +16,7 @@ import { environment } from '../../../environments/environment';
 export class ProductDetail implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private articuloService = inject(ArticuloService);
+  private articuloService = inject(ArticleService);
   private cartService = inject(CartService);
   private toastService = inject(ToastService);
 
@@ -49,11 +49,11 @@ export class ProductDetail implements OnInit {
 
   cargarProducto(id: number) {
     this.isLoading.set(true);
-    this.articuloService.getArticuloById(id).subscribe({
-      next: (data) => {
+    this.articuloService.getArticleById(id).subscribe({
+      next: (data: any) => {
         this.articulo.set(data);
         if (data.images && data.images.length > 0) {
-          const mainImg = data.images.find(i => i.isMain) || data.images[0];
+          const mainImg = data.images.find((i: any) => i.isMain) || data.images[0];
           this.selectedImage.set(this.getImageUrl(mainImg.imageUrl));
         }
         this.isLoading.set(false);
@@ -111,9 +111,9 @@ export class ProductDetail implements OnInit {
       next: () => {
         this.toastService.success('Producto agregado al carrito con éxito');
       },
-      error: () => {
-        this.toastService.error('Debes iniciar sesión para agregar productos al carrito');
-        this.router.navigate(['/auth/login']);
+      error: (err) => {
+        this.toastService.error('Ocurrió un error al agregar el producto al carrito');
+        console.error(err);
       }
     });
   }

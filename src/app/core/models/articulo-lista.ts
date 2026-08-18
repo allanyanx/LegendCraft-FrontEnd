@@ -6,5 +6,8 @@ export interface ArticuloLista {
   isPrintOnDemand: boolean;
   requiresQuote: boolean;
   printTimeDays: number;
+  isOnSale: boolean;
+  discountPrice?: number;
+  discountPercentage?: number;
   mainImageUrl: string;
 }
