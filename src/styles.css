@@ -39,3 +39,15 @@ select {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+@keyframes pan-image {
+  0% { background-position: top; }
+  50% { background-position: bottom; }
+  100% { background-position: top; }
+}
+
+.animate-pan-bg-1 { animation: pan-image 25s infinite ease-in-out; }
+.animate-pan-bg-2 { animation: pan-image 20s infinite ease-in-out reverse; }
+.animate-pan-bg-3 { animation: pan-image 30s infinite ease-in-out; }
+.animate-pan-bg-4 { animation: pan-image 22s infinite ease-in-out reverse; }
+

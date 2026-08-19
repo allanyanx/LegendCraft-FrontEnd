@@ -52,34 +52,34 @@
 </section>
 
 <!-- 2. SECCIÓN DE PRODUCTOS -->
-<section class="px-4 py-8 mx-auto max-w-7xl">
-  <h3 class="mb-6 text-2xl font-bold tracking-wide text-center text-white">Nuestros Productos</h3>
-
-  <div class="flex flex-wrap justify-center gap-3 mb-8">
-    <button
-      (click)="cambiarCategoria('Nuevos')"
-      [class]="categoriaActiva() === 'Nuevos' ? 'px-5 py-2 bg-[#E53935] text-white font-semibold rounded-full text-sm transition' : 'px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-white'"
-    >
-      Nuevos
-    </button>
-    <button
-      (click)="cambiarCategoria('Más Relevantes')"
-      [class]="categoriaActiva() === 'Más Relevantes' ? 'px-5 py-2 bg-[#E53935] text-white font-semibold rounded-full text-sm transition' : 'px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-white'"
-    >
-      Más Relevantes
-    </button>
-    <button
-      (click)="cambiarCategoria('Ofertas')"
-      [class]="categoriaActiva() === 'Ofertas' ? 'px-5 py-2 bg-[#E53935] text-white font-semibold rounded-full text-sm transition' : 'px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-white'"
-    >
-      Ofertas
-    </button>
-    <button
-      (click)="cambiarCategoria('Bajo Pedido')"
-      [class]="categoriaActiva() === 'Bajo Pedido' ? 'px-5 py-2 bg-[#E53935] text-white font-semibold rounded-full text-sm transition' : 'px-5 py-2 bg-[#1A1A1A] text-white font-medium rounded-full text-sm border border-neutral-700 transition hover:border-white'"
-    >
-      Bajo Pedido
-    </button>
+<section class="px-4 pb-12 mx-auto max-w-7xl">
+  <div class="flex flex-col items-center justify-center py-6 mb-8">
+    <div class="flex flex-wrap justify-center gap-3 px-4">
+      <button
+        (click)="cambiarCategoria('Nuevos')"
+        [class]="categoriaActiva() === 'Nuevos' ? 'px-6 py-2.5 bg-gradient-to-r from-[#E53935] to-[#FF5252] text-white font-bold rounded-full text-sm shadow-[0_4px_15px_rgba(229,57,53,0.4)] transition-all transform hover:scale-105' : 'px-6 py-2.5 bg-[#1A1A1A]/80 text-[#9E9E9E] font-medium rounded-full text-sm border border-[#2B2B2B] hover:text-white hover:border-[#E53935]/50 transition-all'"
+      >
+        Nuevos
+      </button>
+      <button
+        (click)="cambiarCategoria('Más Relevantes')"
+        [class]="categoriaActiva() === 'Más Relevantes' ? 'px-6 py-2.5 bg-gradient-to-r from-[#E53935] to-[#FF5252] text-white font-bold rounded-full text-sm shadow-[0_4px_15px_rgba(229,57,53,0.4)] transition-all transform hover:scale-105' : 'px-6 py-2.5 bg-[#1A1A1A]/80 text-[#9E9E9E] font-medium rounded-full text-sm border border-[#2B2B2B] hover:text-white hover:border-[#E53935]/50 transition-all'"
+      >
+        Más Relevantes
+      </button>
+      <button
+        (click)="cambiarCategoria('Ofertas')"
+        [class]="categoriaActiva() === 'Ofertas' ? 'px-6 py-2.5 bg-gradient-to-r from-[#E53935] to-[#FF5252] text-white font-bold rounded-full text-sm shadow-[0_4px_15px_rgba(229,57,53,0.4)] transition-all transform hover:scale-105' : 'px-6 py-2.5 bg-[#1A1A1A]/80 text-[#9E9E9E] font-medium rounded-full text-sm border border-[#2B2B2B] hover:text-white hover:border-[#E53935]/50 transition-all'"
+      >
+        Ofertas
+      </button>
+      <button
+        (click)="cambiarCategoria('Bajo Pedido')"
+        [class]="categoriaActiva() === 'Bajo Pedido' ? 'px-6 py-2.5 bg-gradient-to-r from-[#E53935] to-[#FF5252] text-white font-bold rounded-full text-sm shadow-[0_4px_15px_rgba(229,57,53,0.4)] transition-all transform hover:scale-105' : 'px-6 py-2.5 bg-[#1A1A1A]/80 text-[#9E9E9E] font-medium rounded-full text-sm border border-[#2B2B2B] hover:text-white hover:border-[#E53935]/50 transition-all'"
+      >
+        Bajo Pedido
+      </button>
+    </div>
   </div>
 
   <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
