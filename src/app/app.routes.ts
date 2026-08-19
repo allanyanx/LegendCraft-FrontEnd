@@ -13,5 +13,9 @@ export const routes: Routes = [
   { path: 'auth/register', loadComponent: () => import('./features/auth/register/register').then(m => m.Register) },
   { path: 'dashboard-user', loadComponent: () => import('./features/user/dashboard-user/dashboard-user').then(m => m.DashboardUser), canActivate: [authGuard] },
   { path: 'dashboard-admin', loadComponent: () => import('./features/admin/dashboard-admin/dashboard-admin').then(m => m.DashboardAdmin), canActivate: [adminGuard] },
+  { path: 'terminos', loadComponent: () => import('./features/info/terms/terms').then(m => m.Terms) },
+  { path: 'nosotros', loadComponent: () => import('./features/info/about/about').then(m => m.About) },
+  { path: 'envios', loadComponent: () => import('./features/info/shipping/shipping').then(m => m.Shipping) },
+  { path: 'faq', loadComponent: () => import('./features/info/faq/faq').then(m => m.Faq) },
   { path: '**', redirectTo: 'home' },
 ];

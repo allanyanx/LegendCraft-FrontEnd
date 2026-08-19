@@ -1,0 +1,31 @@
+<div class="container mx-auto px-6 py-12 text-[#E0E0E0] min-h-screen">
+  <h1 class="text-3xl font-bold text-white mb-6">Preguntas Frecuentes</h1>
+  
+  <div *ngIf="loading" class="flex justify-center py-10">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#E53935]"></div>
+  </div>
+
+  <div *ngIf="!loading && faqs.length === 0" class="bg-[#1A1A1A] p-8 rounded-lg border border-[#2B2B2B] text-center">
+    <p>No hay preguntas frecuentes disponibles por el momento.</p>
+  </div>
+
+  <div *ngIf="!loading && faqs.length > 0" class="space-y-4">
+    <div *ngFor="let faq of faqs; let i = index" class="bg-[#1A1A1A] border border-[#2B2B2B] rounded-lg overflow-hidden">
+      <button 
+        (click)="toggleFaq(i)" 
+        class="w-full flex justify-between items-center p-5 text-left focus:outline-none hover:bg-[#222222] transition-colors"
+      >
+        <span class="text-lg font-medium text-white">{{ faq.question }}</span>
+        <svg [class.rotate-180]="openIndex === i" class="w-6 h-6 text-[#E53935] transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div 
+        *ngIf="openIndex === i" 
+        class="p-5 pt-0 text-[#B0B0B0] border-t border-[#2B2B2B] mt-2"
+      >
+        <p class="mt-4">{{ faq.answer }}</p>
+      </div>
+    </div>
+  </div>
+</div>
